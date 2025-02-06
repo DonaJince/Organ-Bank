@@ -1,0 +1,41 @@
+const mongoose = require("mongoose");
+var userSchema = new mongoose.Schema({
+    name:{
+        type:String,
+        required:true,
+        maxlength:32,
+        trim:true
+    },
+    email:{
+        type:String,
+        required:true,
+        unique:true,
+        trim:true
+    },
+    phone:{
+        type:Number,
+        required:true,
+        unique:true
+    },
+    bloodtype:{
+        type:String,
+        trim:true
+    },
+    password:{
+        type:String,
+        required:true,
+    },
+    usertype:{
+        type:String,
+        default:"invalid"
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
+    },
+    status:{
+        type:String,
+        default:"pending"
+    }
+})
+module.exports = mongoose.model("User",userSchema);
