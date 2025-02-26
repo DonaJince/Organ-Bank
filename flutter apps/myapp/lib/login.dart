@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:myapp/choose_role.dart';
 import 'package:myapp/services/userservices.dart'; // Import the choose_role page
@@ -40,9 +39,22 @@ class LoginPage extends StatelessWidget {
       print(response.data);
       if (response.data['user']['status'] == "pending") {
         _showSuccessDialog(context);
-      }
-      else{
-        
+      } else if (response.data['user']['status'] == "approved" &&
+          response.data['user']['usertype'] == "Donor") {
+        Navigator.pushNamed(
+          context,
+          '/donorDashboard',
+          arguments: response.data['user']['_id'], // Pass the user ID
+        );
+      } else if (response.data['user']['status'] == "approved" &&
+          response.data['user']['usertype'] == "Receipient") {
+        Navigator.pushNamed(
+          context,
+          '/receiverDashboard',
+          arguments: response.data['user']['_id'], // Pass the user ID
+        );
+      } else {
+        print('Invalid user');
       }
     } catch (e) {
       print(e);

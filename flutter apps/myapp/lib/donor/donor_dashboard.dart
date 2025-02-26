@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 class DonorDashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Retrieve the user ID passed from the login page
+    final String userId = ModalRoute.of(context)!.settings.arguments as String;
+    final String email = ModalRoute.of(context)!.settings.arguments as String;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Donor Dashboard'),
@@ -14,7 +18,11 @@ class DonorDashboardPage extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/updateProfile');
+                Navigator.pushNamed(
+                  context,
+                  '/updateUserProfile',
+                  arguments: userId, // Pass the user ID
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
@@ -22,6 +30,22 @@ class DonorDashboardPage extends StatelessWidget {
                 textStyle: TextStyle(fontSize: 18),
               ),
               child: Text('Update Profile'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  '/submitDonation',
+                  arguments: userId, // Pass the user ID
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                textStyle: TextStyle(fontSize: 18),
+              ),
+              child: Text('Make Donation'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -38,7 +62,11 @@ class DonorDashboardPage extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/feedback');
+                Navigator.pushNamed(
+                  context,
+                  '/submitFeedback',
+                  arguments: email, // Pass the user ID
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
@@ -50,7 +78,11 @@ class DonorDashboardPage extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/complaint');
+                Navigator.pushNamed(
+                  context,
+                  '/submitComplaint',
+                  arguments: email, // Pass the user ID
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
@@ -59,6 +91,7 @@ class DonorDashboardPage extends StatelessWidget {
               ),
               child: Text('Complaint'),
             ),
+            
           ],
         ),
       ),

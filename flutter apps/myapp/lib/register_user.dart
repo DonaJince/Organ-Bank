@@ -131,7 +131,7 @@ class _RegisterUserState extends State<RegisterUser> {
                     _role = newValue!;
                   });
                 },
-                items: <String>['Donor', 'Recipient']
+                items: <String>['Donor', 'Receipient']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
