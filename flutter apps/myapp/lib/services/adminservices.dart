@@ -24,6 +24,7 @@ class AdminServices {
     );
     return response;
   }
+
   getDonorDetailsById(String id) async {
     final response =
         await dio.post("${baseUrl}getDonorDetailsById", data: {"_id": id});
@@ -78,17 +79,29 @@ class AdminServices {
   }
 
   rejectHospital(String id) async {
-    final response = await dio.post("${baseUrl}rejectHospital", data: {"_id": id});
+    final response =
+        await dio.post("${baseUrl}rejectHospital", data: {"_id": id});
     return response;
   }
 
-sendRegistrationApprovalEmail(String? email) async {
-    return await dio
-        .post("${baseUrl}sendRegistrationApprovalEmail", data: {"email": email});
+  sendRegistrationApprovalEmail(String? email) async {
+    return await dio.post("${baseUrl}sendRegistrationApprovalEmail",
+        data: {"email": email});
   }
 
-sendRegistrationRejectionEmail(String? email) async {
-    return await dio
-        .post("${baseUrl}sendRegistrationRejectionEmail", data: {"email": email});
+  sendRegistrationRejectionEmail(String? email) async {
+    return await dio.post("${baseUrl}sendRegistrationRejectionEmail",
+        data: {"email": email});
+  }
+
+  getPendingMatches() async {
+    try {
+      final response = await dio.get("${baseUrl}pendingMatches");
+      print("Pending matches response: ${response.data}"); // Debugging
+      return response.data; // Ensure it returns the JSON data correctly
+    } catch (e) {
+      print("Error fetching pending matches: $e");
+      return {'success': false, 'message': 'Failed to fetch pending matches'};
+    }
   }
 }

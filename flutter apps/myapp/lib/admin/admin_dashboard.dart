@@ -10,10 +10,13 @@ class AdminDashboardPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView( // Added SingleChildScrollView
+        child: SingleChildScrollView(
+          // Added SingleChildScrollView
           child: ListView(
-            shrinkWrap: true, // Added shrinkWrap to make ListView work inside SingleChildScrollView
-            physics: NeverScrollableScrollPhysics(), // Disable ListView's own scrolling
+            shrinkWrap:
+                true, // Added shrinkWrap to make ListView work inside SingleChildScrollView
+            physics:
+                NeverScrollableScrollPhysics(), // Disable ListView's own scrolling
             children: <Widget>[
               ElevatedButton(
                 onPressed: () {
@@ -49,18 +52,6 @@ class AdminDashboardPage extends StatelessWidget {
                   textStyle: TextStyle(fontSize: 18, color: Colors.black),
                 ),
                 child: Text('Verify Hospital'),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/verifyOrganRequest');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-                child: Text('Verify Organ Request'),
               ),
               SizedBox(height: 20),
               ElevatedButton(

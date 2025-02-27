@@ -465,105 +465,6 @@ exports.submitRequest = async (req, res) => {
 
 
 
-
-exports.getApprovedDonor = async (req, res) => {
-    try {
-        // Fetch approved donors
-        const users = await User.find(
-            { status: "approved", usertype: "Donor" },
-            { _id: 1, bloodtype: 1 } // Fetch only required fields
-        );
-
-        if (!users || users.length === 0) {
-            return res.status(400).json({ message: "No approved donors found" });
-        }
-
-        // Fetch only available & pending donated organs for each donor
-        const donorsWithOrgans = await Promise.all(
-            users.map(async (user) => {
-                const donatedOrgans = await Donation.find(
-                    {
-                        donorid: user._id,
-                        availability_status: "available",
-                        donation_status: "pending"
-                    },
-                    { _id: 1, organ: 1, availability_status: 1, donation_status: 1 }
-                );
-
-                return donatedOrgans.length > 0
-                    ? {
-                        donorid: user._id,
-                        bloodtype: user.bloodtype,
-                        donatedOrgans: donatedOrgans
-                    }
-                    : null;
-            })
-        );
-
-        // Remove donors with no matching donated organs
-        const filteredDonors = donorsWithOrgans.filter(donor => donor !== null);
-
-        if (filteredDonors.length === 0) {
-            return res.status(400).json({ message: "No available organs found for approved donors" });
-        }
-
-        return res.status(200).json(filteredDonors);
-    } catch (error) {
-        console.error("Error fetching approved donors:", error);
-        return res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-
-
-exports.getApprovedReceipient = async (req, res) => {
-    try {
-        // Fetch approved recipients with only required fields
-        const users = await User.find(
-            { status: "approved", usertype: "Receipient" },
-            { _id: 1, bloodtype: 1 } // Fetch only _id and bloodtype
-        );
-
-        if (!users || users.length === 0) {
-            return res.status(400).json({ message: "No approved recipients found" });
-        }
-
-        // Fetch pending requests for each recipient
-        const recipientsWithRequests = await Promise.all(
-            users.map(async (user) => {
-                const requestedOrgans = await Request.find(
-                    {
-                        receipientid: user._id,
-                        requested_status: "pending"
-                    },
-                    { _id: 1, organ: 1, hospitalid: 1, requested_status: 1 } // Fetch hospital ID too
-                );
-
-                return requestedOrgans.length > 0
-                    ? {
-                        receipientid: user._id,
-                        bloodtype: user.bloodtype,
-                        requestedOrgans: requestedOrgans
-                    }
-                    : null;
-            })
-        );
-
-        // Remove recipients with no pending organ requests
-        const filteredRecipients = recipientsWithRequests.filter(recipient => recipient !== null);
-
-        if (filteredRecipients.length === 0) {
-            return res.status(400).json({ message: "No pending organ requests found for approved recipients" });
-        }
-
-        return res.status(200).json(filteredRecipients);
-    } catch (error) {
-        console.error("Error fetching approved recipients:", error);
-        return res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-
 exports.getBloodType = async (req, res) => {
     try {
         const { userid } = req.params;
@@ -702,6 +603,21 @@ exports.fetchMatchedReceipient = async (req, res) => {
         return res.status(200).json({ message: "Matching recipients found and stored successfully", matchedOrgans: savedMatchedOrgans });
     } catch (error) {
         console.error("Error fetching matched recipient:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+exports.getPendingMatches = async (req, res) => {
+    try {
+        const pendingMatches = await MatchedOrgans.find({ status: "pending" });
+
+        if (!pendingMatches || pendingMatches.length === 0) {
+            return res.status(400).json({ message: "No pending matches found" });
+        }
+
+        return res.status(200).json({ pendingMatches });
+    } catch (error) {
+        console.error("Error fetching pending matches:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
 };
