@@ -54,8 +54,7 @@ class MyApp extends StatelessWidget {
         '/submitDonation': (context) => MakeDonationsPage(
             id: ModalRoute.of(context)!.settings.arguments as String),
         '/submitRequest': (context) => MakeRequestPage(
-          id: ModalRoute.of(context)!.settings.arguments as String
-        ),
+            id: ModalRoute.of(context)!.settings.arguments as String),
         // ...other routes...
       },
     );
@@ -68,6 +67,8 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Organ Bank'),
+        backgroundColor: Colors.teal,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -78,54 +79,132 @@ class HomePage extends StatelessWidget {
               Text(
                 'Welcome to the Organ Bank',
                 style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.teal),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'About the Program',
-                style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: Colors.teal),
               ),
               SizedBox(height: 10),
               Text(
-                'The Organ Bank program is dedicated to saving lives by facilitating organ donations and transplants. Our system allows users to register as donors, find matching recipients, and manage the entire process seamlessly.',
-                style: TextStyle(fontSize: 16),
+                'A platform dedicated to saving lives through efficient organ donation and transplantation.',
+                style: TextStyle(fontSize: 16, color: Colors.black87),
               ),
               SizedBox(height: 20),
-              Text(
-                'What the System Does',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.teal),
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Our system provides a platform for users to register as organ donors, search for available organs, and manage their donation preferences. It also helps medical professionals to find matching donors for patients in need of transplants.',
-                style: TextStyle(fontSize: 16),
+
+              // Add image above the About section
+              Center(
+                child: Image.asset(
+                  'assets/image.png', // Ensure this image exists in the assets folder
+                  height: 200,
+                ),
               ),
               SizedBox(height: 20),
+
+              // About Section
+              Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.info, color: Colors.teal, size: 30),
+                      SizedBox(height: 10),
+                      Text(
+                        'About the Program',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'The Organ Bank is a life-saving initiative that connects donors and recipients through an efficient matching system. It ensures timely organ allocation while providing transparency in the donation process.',
+                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+
+              // System Features Section
+              Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.settings, color: Colors.teal, size: 30),
+                      SizedBox(height: 10),
+                      Text(
+                        'What the System Does',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal),
+                      ),
+                      SizedBox(height: 10),
+                      _buildFeatureItem(
+                          '✔️ Register as an organ donor or recipient.'),
+                      _buildFeatureItem(
+                          '✔️ Match donors with recipients based on medical compatibility.'),
+                      _buildFeatureItem(
+                          '✔️ Manage donation and transplantation requests.'),
+                      _buildFeatureItem(
+                          '✔️ Provide a secure platform for hospitals to verify donor eligibility.'),
+                      _buildFeatureItem(
+                          '✔️ Generate reports and track transplantation success rates.'),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 30),
+
+              // Login Button
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    //Navigate to login page
                     Navigator.pushNamed(context, '/login');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                    textStyle: TextStyle(fontSize: 18),
+                    textStyle:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  child: Text('Login'),
+                  child: Text('Get Started'),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Helper function for feature list items
+  Widget _buildFeatureItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Icon(Icons.check_circle, color: Colors.green),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(text,
+                style: TextStyle(fontSize: 16, color: Colors.black87)),
+          ),
+        ],
       ),
     );
   }
