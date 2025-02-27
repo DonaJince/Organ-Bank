@@ -143,4 +143,23 @@ class UserServices {
       return {'success': false, 'message': 'Failed to fetch matched donor'};
     }
   }
+
+fetchMatchedReceipient(String donorId,  String bloodType,
+      String organ) async {
+    try {
+      final response = await dio.post("${baseUrl}fetchMatchedReceipient",
+          data: {
+            "donorid": donorId,
+            "bloodtype": bloodType,
+            "organ": organ,
+          },
+          options: options);
+      print("Matched receipient response: ${response.data}"); // Debugging
+      return response.data; // Ensure it returns the JSON data correctly
+    } catch (e) {
+      print("Error fetching matched receipient: $e");
+      return {'success': false, 'message': 'Failed to fetch matched receipient'};
+    }
+  }
+
 }

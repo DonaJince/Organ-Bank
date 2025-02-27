@@ -667,49 +667,38 @@ exports.fetchMatchedReceipient = async (req, res) => {
 
         console.log("Request received with:", req.body);
 
-        // Find matching requested organs
-        const requestedOrgans = await Request.find({
-            organ: organ,
-            requested_status: "pending"
-        }).populate("receipientid");
-
-        console.log("Requested organs found:", requestedOrgans);
-
-        if (!requestedOrgans || requestedOrgans.length === 0) {
-            return res.status(400).json({ message: "No matching requested organs found" });
-        }
-
-        // Find users with matching blood type
-        const users = await User.find({
+        // Find recipients with matching blood type and usertype as 'Receipient'
+        const recipients = await User.find({
             bloodtype: bloodtype,
-            _id: { $in: requestedOrgans.map(request => request.receipientid._id) }
+            usertype: "Receipient"
         });
 
-        console.log("Users with matching blood type found:", users);
+        console.log("Recipients with matching blood type found:", recipients);
 
-        if (!users || users.length === 0) {
-            return res.status(400).json({ message: "No users with matching blood type found" });
+        if (!recipients || recipients.length === 0) {
+            return res.status(400).json({ message: "No recipients with matching blood type found" });
         }
 
-        // Filter requested organs by matching blood type
-        const matchedRequests = requestedOrgans.filter(request => 
-            users.some(user => user._id.equals(request.receipientid._id))
-        );
+        // Find requests that match the organ and belong to the recipients found
+        const matchedRequests = await Request.find({
+            organ: organ,
+            requested_status: "pending",
+            receipientid: { $in: recipients.map(rec => rec._id) }
+        });
 
-        console.log("Matched requests:", matchedRequests);
+        console.log("Matching organ requests found:", matchedRequests);
 
-        if (matchedRequests.length === 0) {
-            return res.status(400).json({ message: "No matching requests found for the given blood type" });
+        if (!matchedRequests || matchedRequests.length === 0) {
+            return res.status(400).json({ message: "No matching organ requests found for the given blood type" });
         }
 
-        // Store the matching details in MatchedOrgans collection
+        // Save matched organs without fetching the hospital again
         const matchedOrganPromises = matchedRequests.map(request => {
             const matchedOrgan = new MatchedOrgans({
-                receipientid: request.receipientid._id,
+                receipientid: request.receipientid,
                 donorid,
                 hospitalid: request.hospitalid,
-                organ,
-                matchedDonorId: donorid // Store matched donor ID
+                organ
             });
             return matchedOrgan.save();
         });

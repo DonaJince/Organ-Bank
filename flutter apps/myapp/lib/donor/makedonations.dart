@@ -22,6 +22,71 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
     'Bone Marrow': 'Bone Marrow',
   };
 
+  String? _bloodType;
+  String? get bloodType => _bloodType;
+  set bloodType(String? value) {
+    _bloodType = value;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchBloodType(); // Call _fetchBloodType on initialization
+  }
+
+  Future<void> _fetchBloodType() async {
+    try {
+      print("Fetching blood type for user ID: ${widget.id}");
+      final response = await userServices.getBloodType(widget.id);
+      print("Blood type response: $response");
+
+      if (response != null && response.containsKey('bloodtype')) {
+        setState(() {
+          bloodType = response['bloodtype'];
+        });
+        print("Blood type fetched successfully: $bloodType");
+      } else {
+        print("Failed to fetch blood type: Invalid response format");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load blood type')),
+        );
+      }
+    } catch (e) {
+      print("Error fetching blood type: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  Future<void> fetchMatchedReceipient(
+      String donorId, String bloodType, String organ) async {
+    try {
+      print("Posting matched recipient request for Donor ID: $donorId");
+      final response =
+          await userServices.fetchMatchedReceipient(donorId, bloodType, organ);
+      print("Matched recipient request response: $response");
+
+      if (response['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Matched recipient request submitted successfully.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Failed to submit matched recipient request.')),
+        );
+      }
+    } catch (e) {
+      print("Error posting matched recipient request: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   Future<void> _submitDonation() async {
     if (selectedOrgan != null) {
       try {
@@ -31,6 +96,8 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Donation submitted successfully.')),
           );
+          fetchMatchedReceipient(widget.id, bloodType!,
+              selectedOrgan!); // Call fetchMatchedReceipient after successful donation
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to submit donation.')),
