@@ -598,40 +598,30 @@ exports.fetchMatchedDonor = async (req, res) => {
 
         console.log("Request received with:", req.body);
 
-        // Find matching donated organs
-        const donatedOrgans = await Donation.find({
-            organ: organ,
-            availability_status: "available",
-            donation_status: "pending"
-        }).populate("donorid");
-
-        console.log("Donated organs found:", donatedOrgans);
-
-        if (!donatedOrgans || donatedOrgans.length === 0) {
-            return res.status(400).json({ message: "No matching donated organs found" });
-        }
-
-        // Find users with matching blood type
-        const users = await User.find({
+        // Find donors with matching blood type and usertype as 'Donor'
+        const donors = await User.find({
             bloodtype: bloodtype,
-            _id: { $in: donatedOrgans.map(donation => donation.donorid._id) }
+            usertype: "Donor"
         });
 
-        console.log("Users with matching blood type found:", users);
+        console.log("Donors with matching blood type found:", donors);
 
-        if (!users || users.length === 0) {
-            return res.status(400).json({ message: "No users with matching blood type found" });
+        if (!donors || donors.length === 0) {
+            return res.status(400).json({ message: "No donors with matching blood type found" });
         }
 
-        // Filter donated organs by matching blood type
-        const matchedDonations = donatedOrgans.filter(donation => 
-            users.some(user => user._id.equals(donation.donorid._id))
-        );
+        // Find donations that match the organ and belong to the donors found
+        const matchedDonations = await Donation.find({
+            organ: organ,
+            availability_status: "available",
+            donation_status: "pending",
+            donorid: { $in: donors.map(donor => donor._id) }
+        }).populate("donorid");
 
-        console.log("Matched donations:", matchedDonations);
+        console.log("Matching donations found:", matchedDonations);
 
-        if (matchedDonations.length === 0) {
-            return res.status(400).json({ message: "No matching donations found for the given blood type" });
+        if (!matchedDonations || matchedDonations.length === 0) {
+            return res.status(400).json({ message: "No matching donations found for the given blood type and organ" });
         }
 
         // Store the matching details in MatchedOrgans collection
@@ -656,6 +646,7 @@ exports.fetchMatchedDonor = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
 
 exports.fetchMatchedReceipient = async (req, res) => {
     try {
@@ -692,13 +683,14 @@ exports.fetchMatchedReceipient = async (req, res) => {
             return res.status(400).json({ message: "No matching organ requests found for the given blood type" });
         }
 
-        // Save matched organs without fetching the hospital again
+        // Store the matching details in MatchedOrgans collection
         const matchedOrganPromises = matchedRequests.map(request => {
             const matchedOrgan = new MatchedOrgans({
                 receipientid: request.receipientid,
                 donorid,
                 hospitalid: request.hospitalid,
-                organ
+                organ,
+                matchedDonorId: donorid // Store matched donor ID
             });
             return matchedOrgan.save();
         });

@@ -67,20 +67,9 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
           await userServices.fetchMatchedReceipient(donorId, bloodType, organ);
       print("Matched recipient request response: $response");
 
-      if (response['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text('Matched recipient request submitted successfully.')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Failed to submit matched recipient request.')),
-        );
-      }
+      
     } catch (e) {
-      print("Error posting matched recipient request: $e");
+  
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );

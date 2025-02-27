@@ -89,17 +89,9 @@ Future<void> _fetchBloodType() async {
       final response = await userServices.fetchMatchedDonor(receipientId, hospitalId, bloodType, organ);
       print("Matched donor request response: $response");
 
-      if (response['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Matched donor request submitted successfully.')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit matched donor request.')),
-        );
-      }
+      
     } catch (e) {
-      print("Error posting matched donor request: $e");
+  
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
