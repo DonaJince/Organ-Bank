@@ -28,8 +28,10 @@ router.post("/submitRequest", userController.submitRequest);
 router.get("/getApprovedDonor", userController.getApprovedDonor);
 router.get("/getApprovedReceipient", userController.getApprovedReceipient);
 router.get("/getApprovedHospitals", userController.getApprovedHospitals);
-router.get("/matchOrgan", userController.matchOrgan);
 router.get("/getFeedback", userController.getFeedback);
 router.get("/getComplaint", userController.getComplaint);
+router.post("/fetchMatchedDonor", userController.fetchMatchedDonor);
+router.post("/fetchMatchedReceipient", userController.fetchMatchedReceipient);
+router.get("/getBloodType/:userid",userController.getBloodType);
 
 module.exports = router;

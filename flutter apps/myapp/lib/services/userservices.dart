@@ -109,9 +109,38 @@ class UserServices {
   }
 
   getComplaints() async {
-    final response =
-        await dio.get("${baseUrl}getComplaint", options: options);
+    final response = await dio.get("${baseUrl}getComplaint", options: options);
     return response.data; // Ensure it returns the JSON data correctly
   }
-  
+
+  getBloodType(String userId) async {
+    try {
+      final response =
+          await dio.get("${baseUrl}getBloodType/$userId", options: options);
+      print("Blood type response: ${response.data}"); // Debugging
+      return response.data; // Ensure it returns the JSON data correctly
+    } catch (e) {
+      print("Error fetching blood type: $e");
+      return {'success': false, 'message': 'Failed to fetch blood type'};
+    }
+  }
+
+  fetchMatchedDonor(String receipientId, String hospitalId, String bloodType,
+      String organ) async {
+    try {
+      final response = await dio.post("${baseUrl}fetchMatchedDonor",
+          data: {
+            "receipientid": receipientId,
+            "hospitalid": hospitalId,
+            "bloodtype": bloodType,
+            "organ": organ,
+          },
+          options: options);
+      print("Matched donor response: ${response.data}"); // Debugging
+      return response.data; // Ensure it returns the JSON data correctly
+    } catch (e) {
+      print("Error fetching matched donor: $e");
+      return {'success': false, 'message': 'Failed to fetch matched donor'};
+    }
+  }
 }
