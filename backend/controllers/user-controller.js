@@ -166,7 +166,9 @@ exports.getDonorDetailsById = (req, res) => {
     console.log("Request Body:", req.body); // Debugging
     User.findOne({ _id: req.body._id }, { password: 0 }).then((user) => {
         if (user) {
+            print(user);
             return res.status(200).json(user);
+
         } else {
             return res.status(400).json({ message: "Donor not found" });
         }
@@ -217,6 +219,33 @@ exports.getReceipientDetailsById = (req, res) => {
     });
 };
 
+
+exports.getFeedback = (req, res) => {
+    console.log("Fetching all feedback details"); // Debugging
+
+    Feedback.find()
+        .then((feedbacks) => {
+            return res.status(200).json(feedbacks);
+            
+        })
+        .catch((error) => {
+            console.error("Error fetching feedback:", error);
+            return res.status(500).json({ message: "Internal server error" });
+        });
+};
+
+exports.getComplaint = (req, res) => {
+    console.log("Fetching all complaint details"); // Debugging
+
+    Complaint.find()
+        .then((complaints) => { 
+            return res.status(200).json(complaints);
+        })
+        .catch((error) => {
+            console.error("Error fetching complaints:", error);
+            return res.status(500).json({ message: "Internal server error" });
+        });
+};
 
 
 exports.approveReceipient = (req, res) => {
@@ -434,7 +463,8 @@ exports.submitRequest = async (req, res) => {
       res.status(500).json({ success: false, message: error.message });
     }
   };
-  
+
+
 
 
 exports.getApprovedDonor = async (req, res) => {

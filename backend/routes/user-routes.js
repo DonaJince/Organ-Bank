@@ -29,5 +29,7 @@ router.get("/getApprovedDonor", userController.getApprovedDonor);
 router.get("/getApprovedReceipient", userController.getApprovedReceipient);
 router.get("/getApprovedHospitals", userController.getApprovedHospitals);
 router.get("/matchOrgan", userController.matchOrgan);
+router.get("/getFeedback", userController.getFeedback);
+router.get("/getComplaint", userController.getComplaint);
 
 module.exports = router;

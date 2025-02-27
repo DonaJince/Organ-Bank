@@ -102,4 +102,16 @@ class UserServices {
         await dio.get("${baseUrl}getApprovedReceipient", options: options);
     return response.data; // Ensure it returns the JSON data correctly
   }
+
+  getFeedback() async {
+    final response = await dio.get("${baseUrl}getFeedback", options: options);
+    return response.data; // Ensure it returns the JSON data correctly
+  }
+
+  getComplaints() async {
+    final response =
+        await dio.get("${baseUrl}getComplaint", options: options);
+    return response.data; // Ensure it returns the JSON data correctly
+  }
+  
 }
