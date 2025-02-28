@@ -5,6 +5,7 @@ import 'package:myapp/admin/verifyreceipient.dart';
 import 'package:myapp/complaint.dart';
 import 'package:myapp/donor/donor_dashboard.dart';
 import 'package:myapp/feedback.dart';
+import 'package:myapp/hospital/hospital_dashboard.dart';
 import 'package:myapp/login.dart';
 import 'package:myapp/admin/admin_dashboard.dart';
 import 'package:myapp/admin/view_matches.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/adminDashboard': (context) => AdminDashboardPage(),
         '/donorDashboard': (context) => DonorDashboardPage(),
+        '/hospitalDashboard': (context) => HospitalDashboardPage(),
         '/receiverDashboard': (context) => ReceiverDashboardPage(),
         '/viewMatches': (context) => ViewMatchesPage(),
         '/transplantationResults': (context) => TransplantationResultsPage(),

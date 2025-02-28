@@ -53,7 +53,16 @@ class LoginPage extends StatelessWidget {
           '/receiverDashboard',
           arguments: response.data['user']['_id'], // Pass the user ID
         );
-      } else {
+      }else if (response.data['user']['status'] == "approved" &&
+          response.data['user']['usertype'] == "Hospital") {
+        Navigator.pushNamed(
+          context,
+          '/hospitalDashboard',
+          arguments: response.data['user']['_id'], // Pass the user ID
+        );
+      }
+      
+       else {
         print('Invalid user');
       }
     } catch (e) {
