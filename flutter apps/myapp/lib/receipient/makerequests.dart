@@ -24,6 +24,8 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
     'Blood & Plasma',
     'Bone Marrow'
   ];
+  List<String> requestedOrgans = [];
+  List<String> availableOrgans = [];
   Map<String, String> hospitalMap = {};
 
   @override
@@ -31,6 +33,7 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
     super.initState();
     _fetchApprovedHospitals();
     _fetchBloodType(); // Fetch blood type on initialization
+    _fetchRequestedOrgans(); // Fetch requested organs on initialization
   }
 
   Future<void> _fetchApprovedHospitals() async {
@@ -58,46 +61,62 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
     }
   }
 
-Future<void> _fetchBloodType() async {
-  try {
-    print("Fetching blood type for user ID: ${widget.id}");
-    final response = await userServices.getBloodType(widget.id);
-    print("Blood type response: $response");
-
-    if (response != null && response.containsKey('bloodtype')) {
-      setState(() {
-        bloodType = response['bloodtype'];
-      });
-      print("Blood type fetched successfully: $bloodType");
-    } else {
-      print("Failed to fetch blood type: Invalid response format");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load blood type')),
-      );
-    }
-  } catch (e) {
-    print("Error fetching blood type: $e");
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error: $e')),
-    );
-  }
-}
-
- Future<void> fetchMatchedDonor(String receipientId, String hospitalId, String bloodType, String organ) async {
+  Future<void> _fetchBloodType() async {
     try {
-      print("Posting matched donor request for Recipient ID: $receipientId");
-      final response = await userServices.fetchMatchedDonor(receipientId, hospitalId, bloodType, organ);
-      print("Matched donor request response: $response");
+      print("Fetching blood type for user ID: ${widget.id}");
+      final response = await userServices.getBloodType(widget.id);
+      print("Blood type response: $response");
 
-      
+      if (response != null && response.containsKey('bloodtype')) {
+        setState(() {
+          bloodType = response['bloodtype'];
+        });
+        print("Blood type fetched successfully: $bloodType");
+      } else {
+        print("Failed to fetch blood type: Invalid response format");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load blood type')),
+        );
+      }
     } catch (e) {
-  
+      print("Error fetching blood type: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
     }
   }
 
+  Future<void> _fetchRequestedOrgans() async {
+    try {
+      print("Fetching requested organs for user ID: ${widget.id}");
+      final response = await userServices.getRequestedOrgans(widget.id);
+      print("Requested organs response: $response");
+
+      setState(() {
+        requestedOrgans = response;
+        availableOrgans = organs.where((organ) => !requestedOrgans.contains(organ)).toList();
+      });
+      print("Requested organs fetched successfully: $requestedOrgans");
+      print("Available organs: $availableOrgans");
+    } catch (e) {
+      print("Error fetching requested organs: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  Future<void> fetchMatchedDonor(String receipientId, String hospitalId, String bloodType, String organ) async {
+    try {
+      print("Posting matched donor request for Recipient ID: $receipientId");
+      final response = await userServices.fetchMatchedDonor(receipientId, hospitalId, bloodType, organ);
+      print("Matched donor request response: $response");
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
 
   Future<void> _submitRequest() async {
     if (selectedOrgan != null && selectedHospitalId != null) {
@@ -147,7 +166,7 @@ Future<void> _fetchBloodType() async {
             ),
             Expanded(
               child: ListView(
-                children: organs.map((String organ) {
+                children: availableOrgans.map((String organ) {
                   return RadioListTile<String>(
                     title: Text(organ),
                     value: organ,

@@ -703,3 +703,20 @@ exports.getDonatedOrgans = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
+exports.getRequestedOrgans = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const requestedOrgans = await Request.find({ receipientid: id }); // Corrected the query syntax
+
+        if (!requestedOrgans || requestedOrgans.length === 0) {
+            return res.status(400).json({ message: "No requested organs found" });
+        }
+
+        return res.status(200).json({ organs: requestedOrgans.map(request => request.organ) });
+
+    } catch (error) {
+        console.error("Error fetching requested organs:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}

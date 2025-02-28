@@ -200,4 +200,24 @@ class UserServices {
       return []; // Return an empty list in case of an error
     }
   }
+
+  Future<List<String>> getRequestedOrgans(String receipientId) async {
+    try {
+      final response = await dio.get("${baseUrl}getRequestedOrgans/$receipientId", options: options);
+      print("Requested organs response: ${response.data}"); // Debugging
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data is Map<String, dynamic> && response.data.containsKey('organs')) {
+          return List<String>.from(response.data['organs']);
+        } else {
+          return []; // Return an empty list if the response format is unexpected
+        }
+      } else {
+        return []; // Return an empty list if the status code is not 200
+      }
+    } catch (e) {
+      print("Error fetching requested organs: $e");
+      return []; // Return an empty list in case of an error
+    }
+  }
 }
