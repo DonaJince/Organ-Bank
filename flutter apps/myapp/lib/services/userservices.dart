@@ -22,11 +22,28 @@ class UserServices {
     return await dio.get("${baseUrl}getUserDetailsById/$id", options: options);
   }
 
+  getHospitalDetailsByid(String id) async {
+    return await dio.get("${baseUrl}getHospitalDetailsById/$id",
+        options: options);
+  }
+
   updateUserProfile(String id, String name, String phone) async {
     return await dio.put("${baseUrl}updateUserProfile/$id",
         data: {
           "name": name,
           "phone": phone,
+        },
+        options: options);
+  }
+
+  updateHospitalProfile(String id, String name, String phone, String location,
+      String otherphno) async {
+    return await dio.put("${baseUrl}updateHospitalProfile/$id",
+        data: {
+          "name": name,
+          "phone": phone,
+          "location": location,
+          "otherphno": otherphno,
         },
         options: options);
   }
@@ -144,8 +161,7 @@ class UserServices {
     }
   }
 
-fetchMatchedReceipient(String donorId,  String bloodType,
-      String organ) async {
+  fetchMatchedReceipient(String donorId, String bloodType, String organ) async {
     try {
       final response = await dio.post("${baseUrl}fetchMatchedReceipient",
           data: {
@@ -158,10 +174,10 @@ fetchMatchedReceipient(String donorId,  String bloodType,
       return response.data; // Ensure it returns the JSON data correctly
     } catch (e) {
       print("Error fetching matched receipient: $e");
-      return {'success': false, 'message': 'Failed to fetch matched receipient'};
+      return {
+        'success': false,
+        'message': 'Failed to fetch matched receipient'
+      };
     }
   }
-
-
-
 }

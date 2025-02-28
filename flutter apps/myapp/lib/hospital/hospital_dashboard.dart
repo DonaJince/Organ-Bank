@@ -31,7 +31,7 @@ class HospitalDashboardPage extends StatelessWidget {
                     onTap: () {
                       Navigator.pushNamed(
                         context,
-                        '/updateUserProfile',
+                        '/updateHospitalProfile',
                         arguments: userId, // Pass the user ID
                       );
                     },

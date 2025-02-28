@@ -15,6 +15,7 @@ import 'package:myapp/admin/view_feedbacks.dart';
 import 'package:myapp/admin/view_complaints.dart';
 import 'package:myapp/receipient/makerequests.dart';
 import 'package:myapp/receipient/receiver_dashboard.dart';
+import 'package:myapp/update_hospitalprofile.dart';
 import 'package:myapp/update_userprofile.dart'; // Add this import
 import 'package:myapp/donor/makedonations.dart'; // Add this import
 // ...other imports..
@@ -48,6 +49,8 @@ class MyApp extends StatelessWidget {
         '/verifyReceipients': (context) => VerifyReceipientPage(),
         '/verifyHospitals': (context) => VerifyHospitalPage(),
         '/updateUserProfile': (context) => UpdateUserProfilePage(
+            id: ModalRoute.of(context)!.settings.arguments as String),
+        '/updateHospitalProfile': (context) => UpdateHospitalProfilePage(
             id: ModalRoute.of(context)!.settings.arguments as String),
         '/submitFeedback': (context) => FeedbackForm(
             email: ModalRoute.of(context)!.settings.arguments as String),

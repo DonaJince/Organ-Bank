@@ -357,6 +357,44 @@ exports.updateUserProfile = (req, res) => {
     });
 };
 
+exports.updateHospitalProfile = async (req, res) => {
+    const Id = req.params.id; // Get ID from URL
+
+    try {
+        // Update the User collection
+        const updatedUser = await User.findByIdAndUpdate(
+            Id,
+            { $set: { name: req.body.name, phone: req.body.phone } },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Update the Hospital collection
+        const updatedHospital = await Hospital.findOneAndUpdate(
+            { userid: Id },
+            { $set: { location: req.body.location, otherphno: req.body.otherphno } },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedHospital) {
+            return res.status(404).json({ message: "Hospital not found" });
+        }
+
+        return res.status(200).json({
+            message: "Hospital profile updated successfully",
+            user: updatedUser,
+            hospital: updatedHospital
+        });
+    } catch (error) {
+        console.error("Error updating Hospital profile:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+
 exports.submitFeedback = async (req, res) => {
     try {
         const { email, feedback } = req.body;
@@ -439,6 +477,34 @@ exports.getApprovedHospitals = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error fetching hospitals', error });
     }
 };
+
+exports.getHospitalDetailsByid = async (req, res) => {
+    try {
+        const hospital = await Hospital.findOne({ userid: req.params.id })
+            .populate({
+                path: 'userid',
+                select: 'name email phone'
+            });
+
+        if (!hospital) {
+            return res.status(400).json({ message: 'Hospital not found' });
+        }
+
+        const hospitalDetails = {
+            name: hospital.userid.name,
+            email: hospital.userid.email,
+            phone: hospital.userid.phone,
+            location: hospital.location,
+            otherphno: hospital.otherphno
+        };
+
+        return res.status(200).json(hospitalDetails);
+    } catch (error) {
+        console.error('Error fetching hospital details:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 
 
 exports.submitRequest = async (req, res) => {
