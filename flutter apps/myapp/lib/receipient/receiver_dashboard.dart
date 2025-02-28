@@ -1,96 +1,111 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ReceiverDashboardPage extends StatelessWidget {
-   @override
+  @override
   Widget build(BuildContext context) {
-    // Retrieve the user ID passed from the login page
     final String userId = ModalRoute.of(context)!.settings.arguments as String;
     final String email = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Receiver Dashboard'),
+        title: Text('Receiver Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.teal,
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/updateUserProfile',
-                  arguments: userId, // Pass the user ID
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.teal.shade900, Colors.teal.shade400],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              
+              Expanded(
+                child: ListView(
+                  children: [
+                    _buildDashboardButton(
+                      context,
+                      title: 'Update Profile',
+                      icon: FontAwesomeIcons.userEdit,
+                      route: '/updateUserProfile',
+                      argument: userId,
+                    ),
+                    _buildDashboardButton(
+                      context,
+                      title: 'Make a Request',
+                      icon: FontAwesomeIcons.handHoldingMedical,
+                      route: '/submitRequest',
+                      argument: userId,
+                    ),
+                    _buildDashboardButton(
+                      context,
+                      title: 'Request Status',
+                      icon: FontAwesomeIcons.clipboardList,
+                      route: '/requestStatus',
+                    ),
+                    _buildDashboardButton(
+                      context,
+                      title: 'Give Feedback',
+                      icon: FontAwesomeIcons.comment,
+                      route: '/submitFeedback',
+                      argument: email,
+                    ),
+                    _buildDashboardButton(
+                      context,
+                      title: 'File a Complaint',
+                      icon: FontAwesomeIcons.exclamationCircle,
+                      route: '/submitComplaint',
+                      argument: email,
+                    ),
+                  ],
+                ),
               ),
-              child: Text('Update Profile'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/submitRequest',
-                  arguments: userId, // Pass the user ID
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              child: Text('Make Requests'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/requestStatus');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              child: Text('Request Status'),
-            ),
-            SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/submitFeedback',
-                  arguments: email, // Pass the user ID
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
+  Widget _buildDashboardButton(BuildContext context, {
+    required String title,
+    required IconData icon,
+    required String route,
+    String? argument,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.pushNamed(context, route, arguments: argument);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 5,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.teal.shade900, size: 20),
+            SizedBox(width: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal.shade900,
               ),
-              child: Text('Feedback'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/submitComplaint',
-                  arguments: email, // Pass the user ID
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              child: Text('Complaint'),
             ),
           ],
         ),

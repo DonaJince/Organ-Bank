@@ -1,97 +1,112 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DonorDashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Retrieve the user ID passed from the login page
     final String userId = ModalRoute.of(context)!.settings.arguments as String;
     final String email = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Donor Dashboard'),
+        title: Text('Donor Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.teal,
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/updateUserProfile',
-                  arguments: userId, // Pass the user ID
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              child: Text('Update Profile'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/submitDonation',
-                  arguments: userId, // Pass the user ID
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              child: Text('Make Donation'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/donationStatus');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              child: Text('Donation Status'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/submitFeedback',
-                  arguments: email, // Pass the user ID
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              child: Text('Feedback'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/submitComplaint',
-                  arguments: email, // Pass the user ID
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: TextStyle(fontSize: 18),
-              ),
-              child: Text('Complaint'),
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.teal.shade900, Colors.teal.shade400],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             
+              Expanded(
+                child: ListView(
+                  children: [
+                    _buildDashboardButton(
+                      context,
+                      title: 'Update Profile',
+                      icon: FontAwesomeIcons.userEdit,
+                      route: '/updateUserProfile',
+                      argument: userId,
+                    ),
+                    _buildDashboardButton(
+                      context,
+                      title: 'Make a Donation',
+                      icon: FontAwesomeIcons.handHoldingHeart,
+                      route: '/submitDonation',
+                      argument: userId,
+                    ),
+                    _buildDashboardButton(
+                      context,
+                      title: 'Donation Status',
+                      icon: FontAwesomeIcons.clipboardList,
+                      route: '/donationStatus',
+                    ),
+                    _buildDashboardButton(
+                      context,
+                      title: 'Give Feedback',
+                      icon: FontAwesomeIcons.comment,
+                      route: '/submitFeedback',
+                      argument: email,
+                    ),
+                    _buildDashboardButton(
+                      context,
+                      title: 'File a Complaint',
+                      icon: FontAwesomeIcons.exclamationCircle,
+                      route: '/submitComplaint',
+                      argument: email,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDashboardButton(BuildContext context, {
+    required String title,
+    required IconData icon,
+    required String route,
+    String? argument,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.pushNamed(context, route, arguments: argument);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 5,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.teal.shade900, size: 20),
+            SizedBox(width: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal.shade900,
+              ),
+            ),
           ],
         ),
       ),
