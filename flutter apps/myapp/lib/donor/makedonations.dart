@@ -21,6 +21,8 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
     'Blood & Plasma': 'Blood & Plasma',
     'Bone Marrow': 'Bone Marrow',
   };
+  List<String> donatedOrgans = [];
+  List<String> availableOrgans = [];
 
   String? _bloodType;
   String? get bloodType => _bloodType;
@@ -31,7 +33,8 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
   @override
   void initState() {
     super.initState();
-    _fetchBloodType(); // Call _fetchBloodType on initialization
+    _fetchBloodType();
+    _fetchDonatedOrgans();
   }
 
   Future<void> _fetchBloodType() async {
@@ -59,6 +62,35 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
     }
   }
 
+  Future<void> _fetchDonatedOrgans() async {
+    try {
+      print("Fetching donated organs for user ID: ${widget.id}");
+      final response = await userServices.getDonatedOrgans(widget.id);
+      print("Donated organs response: $response");
+
+      if (response != null && response is List) {
+        setState(() {
+          donatedOrgans = List<String>.from(response);
+          availableOrgans = organs.keys
+              .where((organ) => !donatedOrgans.contains(organ))
+              .toList();
+        });
+        print("Donated organs fetched successfully: $donatedOrgans");
+        print("Available organs: $availableOrgans");
+      } else {
+        print("Failed to fetch donated organs: Invalid response format");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load donated organs')),
+        );
+      }
+    } catch (e) {
+      print("Error fetching donated organs: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   Future<void> fetchMatchedReceipient(
       String donorId, String bloodType, String organ) async {
     try {
@@ -66,10 +98,7 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
       final response =
           await userServices.fetchMatchedReceipient(donorId, bloodType, organ);
       print("Matched recipient request response: $response");
-
-      
     } catch (e) {
-  
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -85,8 +114,7 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Donation submitted successfully.')),
           );
-          fetchMatchedReceipient(widget.id, bloodType!,
-              selectedOrgan!); // Call fetchMatchedReceipient after successful donation
+          fetchMatchedReceipient(widget.id, bloodType!, selectedOrgan!);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to submit donation.')),
@@ -122,7 +150,7 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
             ),
             Expanded(
               child: ListView(
-                children: organs.keys.map((String key) {
+                children: availableOrgans.map((String key) {
                   return RadioListTile<String>(
                     title: Text(key),
                     value: key,

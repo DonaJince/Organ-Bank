@@ -687,3 +687,19 @@ exports.getPendingMatches = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
+exports.getDonatedOrgans = async (req, res) => {    
+    try {
+        const { id } = req.params;
+        const donatedOrgans = await Donation.find({ donorid: id }); // Corrected the query syntax
+
+        if (!donatedOrgans || donatedOrgans.length === 0) {
+            return res.status(400).json({ message: "No donated organs found" });
+        }   
+        return res.status(200).json({ organs: donatedOrgans.map(donation => donation.organ) });
+
+    } catch (error) {
+        console.error("Error fetching donated organs:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};

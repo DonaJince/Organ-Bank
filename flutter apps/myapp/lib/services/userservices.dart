@@ -180,4 +180,24 @@ class UserServices {
       };
     }
   }
+
+  Future<List<String>> getDonatedOrgans(String donorId) async {
+    try {
+      final response = await dio.get("${baseUrl}getDonatedOrgans/$donorId", options: options);
+      print("Donated organs response: ${response.data}"); // Debugging
+
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data is Map<String, dynamic> && response.data.containsKey('organs')) {
+          return List<String>.from(response.data['organs']);
+        } else {
+          return []; // Return an empty list if the response format is unexpected
+        }
+      } else {
+        return []; // Return an empty list if the status code is not 200
+      }
+    } catch (e) {
+      print("Error fetching donated organs: $e");
+      return []; // Return an empty list in case of an error
+    }
+  }
 }

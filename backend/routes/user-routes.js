@@ -19,6 +19,7 @@ router.post("/approveHospital", userController.approveHospital);
 router.post("/rejectHospital", userController.rejectHospital);
 router.get("/getUserDetailsById/:id", userController.getUserDetailsById);
 router.get("/getHospitalDetailsByid/:id", userController.getHospitalDetailsByid);
+router.get("/getDonatedOrgans/:id", userController.getDonatedOrgans);
 router.put("/updateUserProfile/:id", userController.updateUserProfile);
 router.put("/updateHospitalProfile/:id", userController.updateHospitalProfile);
 router.post("/submitFeedback", userController.submitFeedback);
