@@ -869,3 +869,24 @@ exports.approveMatch = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
+
+    exports.getRequests = async (req, res) => {
+        try {
+            const { receipientId } = req.params;
+            console.log("Fetching requests for receipientId:", receipientId);
+    
+            const requests = await Request.find({ receipientid: receipientId });
+    
+            if (!requests || requests.length === 0) {
+                console.log("Requests is null or empty, returning an empty array.");
+                return res.status(200).json([]);  // Ensures response is always an array
+            }
+    
+            console.log("Requests found:", requests);
+            return res.status(200).json(requests);
+        } catch (error) {
+            console.error("Error fetching requests:", error);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+};

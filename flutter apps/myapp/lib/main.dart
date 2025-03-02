@@ -15,6 +15,7 @@ import 'package:myapp/admin/view_feedbacks.dart';
 import 'package:myapp/admin/view_complaints.dart';
 import 'package:myapp/receipient/makerequests.dart';
 import 'package:myapp/receipient/receiver_dashboard.dart';
+import 'package:myapp/receipient/view_requeststatus.dart';
 import 'package:myapp/update_hospitalprofile.dart';
 import 'package:myapp/update_userprofile.dart'; // Add this import
 import 'package:myapp/donor/makedonations.dart'; 
@@ -63,6 +64,8 @@ class MyApp extends StatelessWidget {
             id: ModalRoute.of(context)!.settings.arguments as String),
         '/viewDonationStatus': (context) => ViewDonationStatusPage(
             donorId: ModalRoute.of(context)!.settings.arguments as String),
+        '/viewRequestStatus': (context) => ViewRequestStatusPage(
+            receiverId: ModalRoute.of(context)!.settings.arguments as String),
         // ...other routes...
       },
     );

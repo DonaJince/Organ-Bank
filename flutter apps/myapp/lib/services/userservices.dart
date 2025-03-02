@@ -240,4 +240,20 @@ Future<List<Map<String, dynamic>>> getDonations(String donorId) async {
       throw Exception('Failed to update donation status');
     }
   }
+
+
+  Future<List<Map<String, dynamic>>> getRequests(String receipientId) async {
+    try {
+      final response = await dio.get("${baseUrl}getRequests/$receipientId", options: options);
+      print("Requests response: ${response.data}");
+      if (response.statusCode == 200 && response.data is List) {
+        return List<Map<String, dynamic>>.from(response.data);
+      } else {
+        throw Exception('Failed to load requests');
+      }
+    } catch (e) {
+      print("Error fetching requests: $e");
+      throw Exception('Failed to fetch requests');
+    }
+  }
 }

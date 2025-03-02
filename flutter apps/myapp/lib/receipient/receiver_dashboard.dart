@@ -48,7 +48,8 @@ class ReceiverDashboardPage extends StatelessWidget {
                       context,
                       title: 'Request Status',
                       icon: FontAwesomeIcons.clipboardList,
-                      route: '/requestStatus',
+                      route: '/viewRequestStatus',
+                      argument: userId,
                     ),
                     _buildDashboardButton(
                       context,
