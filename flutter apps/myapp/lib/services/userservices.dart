@@ -108,17 +108,6 @@ class UserServices {
     return response.data; // Ensure it returns the JSON data correctly
   }
 
-  getApprovedDonor() async {
-    final response =
-        await dio.get("${baseUrl}getApprovedDonor", options: options);
-    return response.data; // Ensure it returns the JSON data correctly
-  }
-
-  getApprovedReceipient() async {
-    final response =
-        await dio.get("${baseUrl}getApprovedReceipient", options: options);
-    return response.data; // Ensure it returns the JSON data correctly
-  }
 
   getFeedback() async {
     final response = await dio.get("${baseUrl}getFeedback", options: options);
@@ -218,6 +207,37 @@ class UserServices {
     } catch (e) {
       print("Error fetching requested organs: $e");
       return []; // Return an empty list in case of an error
+    }
+  }
+
+Future<List<Map<String, dynamic>>> getDonations(String donorId) async {
+  try {
+    final response = await dio.get("${baseUrl}/getDonations/$donorId", options: options);
+    print("Donations response: ${response.data}"); // Debugging
+
+    if (response.statusCode == 200 && response.data is List) {
+      return List<Map<String, dynamic>>.from(response.data);
+    } else {
+      return []; // Return an empty list instead of null
+    }
+  } catch (e) {
+    print("Error fetching donations: $e");
+    return []; // Return empty list on error
+  }
+}
+
+
+    Future<Response> updateDonationStatus(String donationId, String newStatus) async {
+    try {
+      final response = await dio.put(
+        "${baseUrl}updateDonationStatus/$donationId",
+        data: {"status": newStatus},
+        options: options,
+      );
+      return response;
+    } catch (e) {
+      print("Error updating donation status: $e");
+      throw Exception('Failed to update donation status');
     }
   }
 }

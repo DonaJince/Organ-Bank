@@ -580,7 +580,6 @@ exports.fetchMatchedDonor = async (req, res) => {
         // Find donations that match the organ and belong to the donors found
         const matchedDonations = await Donation.find({
             organ: organ,
-            availability_status: "available",
             donation_status: "pending",
             donorid: { $in: donors.map(donor => donor._id) }
         }).populate("donorid");
@@ -675,13 +674,32 @@ exports.fetchMatchedReceipient = async (req, res) => {
 
 exports.getPendingMatches = async (req, res) => {
     try {
+        // Find all pending matches
         const pendingMatches = await MatchedOrgans.find({ status: "pending" });
 
         if (!pendingMatches || pendingMatches.length === 0) {
             return res.status(400).json({ message: "No pending matches found" });
         }
 
-        return res.status(200).json({ pendingMatches });
+        // Filter matches based on availability status in Donations
+        const validPendingMatches = [];
+        for (const match of pendingMatches) {
+            const donation = await Donation.findOne({
+                donorid: match.donorid,
+                organ: match.organ,
+                availability_status: "available"
+            });
+
+            if (donation) {
+                validPendingMatches.push(match);
+            }
+        }
+
+        if (validPendingMatches.length === 0) {
+            return res.status(400).json({ message: "No valid pending matches found" });
+        }
+
+        return res.status(200).json({ pendingMatches: validPendingMatches });
     } catch (error) {
         console.error("Error fetching pending matches:", error);
         return res.status(500).json({ message: "Internal server error" });
@@ -720,3 +738,45 @@ exports.getRequestedOrgans = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 }
+
+exports.getDonations = async (req, res) => {
+    try {
+        const { donorId } = req.params;
+        console.log("Fetching donations for donorId:", donorId);
+        
+        const donations = await Donation.find({ donorid: donorId });
+
+        if (!donations) {
+            console.log("Donations is null, returning an empty array.");
+            return res.status(200).json([]);  // Ensures response is always an array
+        }
+
+        console.log("Donations found:", donations);
+        return res.status(200).json(donations);
+    } catch (error) {
+        console.error("Error fetching donations:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+exports.updateDonationStatus = async (req, res) => {
+    const { donationId } = req.params;
+    const { status } = req.body;
+
+    try {
+        const donation = await Donation.findByIdAndUpdate(
+            donationId,
+            { availability_status: status },
+            { new: true, runValidators: true }
+        );
+
+        if (!donation) {
+            return res.status(404).json({ message: "Donation not found" });
+        }
+
+        return res.status(200).json({ message: "Donation status updated successfully", donation });
+    } catch (error) {
+        console.error("Error updating donation status:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};

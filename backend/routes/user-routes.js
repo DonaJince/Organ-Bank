@@ -36,4 +36,6 @@ router.post("/fetchMatchedDonor", userController.fetchMatchedDonor);
 router.post("/fetchMatchedReceipient", userController.fetchMatchedReceipient);
 router.get("/getBloodType/:userid",userController.getBloodType);
 router.get("/pendingMatches", userController.getPendingMatches);
+router.get("/getDonations/:donorId", userController.getDonations);
+router.put("/updateDonationStatus/:donationId", userController.updateDonationStatus);
 module.exports = router;

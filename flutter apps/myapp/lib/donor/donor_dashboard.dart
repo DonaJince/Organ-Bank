@@ -48,7 +48,8 @@ class DonorDashboardPage extends StatelessWidget {
                       context,
                       title: 'Donation Status',
                       icon: FontAwesomeIcons.clipboardList,
-                      route: '/donationStatus',
+                      route: '/viewDonationStatus',
+                      argument: userId,
                     ),
                     _buildDashboardButton(
                       context,
