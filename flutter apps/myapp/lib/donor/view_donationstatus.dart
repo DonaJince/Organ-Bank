@@ -82,16 +82,21 @@ class _ViewDonationStatusPageState extends State<ViewDonationStatusPage> {
                     subtitle: Text(
                       'Status: ${donation['availability_status'] == 'available' ? 'Available' : 'Not Available'}',
                     ),
-                    trailing: TextButton(
-                      onPressed: () {
-                        String newStatus = donation['availability_status'] == 'available' ? 'not available' : 'available';
-                        _toggleDonationStatus(donation['_id'], newStatus);
-                      },
-                      child: Text(
-                        donation['availability_status'] == 'available' ? 'Set as Not Available' : 'Set as Available',
-                        style: TextStyle(color: donation['availability_status'] == 'available' ? Colors.red : Colors.green),
-                      ),
-                    ),
+                    trailing: donation['donation_status'] == 'approved'
+                        ? Text(
+                            'Approved',
+                            style: TextStyle(color: Colors.green),
+                          )
+                        : TextButton(
+                            onPressed: () {
+                              String newStatus = donation['availability_status'] == 'available' ? 'not available' : 'available';
+                              _toggleDonationStatus(donation['_id'], newStatus);
+                            },
+                            child: Text(
+                              donation['availability_status'] == 'available' ? 'Set as Not Available' : 'Set as Available',
+                              style: TextStyle(color: donation['availability_status'] == 'available' ? Colors.red : Colors.green),
+                            ),
+                          ),
                   ),
                 );
               },
