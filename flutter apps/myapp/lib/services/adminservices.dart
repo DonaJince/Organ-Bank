@@ -104,4 +104,16 @@ class AdminServices {
       return {'success': false, 'message': 'Failed to fetch pending matches'};
     }
   }
+
+  approveMatch(matchId) async {
+    try {
+      final response = await dio.post("${baseUrl}approveMatch",
+          data: {"matchid": matchId});
+      print("Approve match response: ${response.data}"); // Debugging
+      return response.data; // Ensure it returns the JSON data correctly
+    } catch (e) {
+      print("Error approving match: $e");
+      return {'success': false, 'message': 'Failed to approve match'};
+    }
+  }
 }

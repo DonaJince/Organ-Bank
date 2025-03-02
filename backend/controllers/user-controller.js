@@ -780,3 +780,92 @@ exports.updateDonationStatus = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
+exports.approveMatch = async (req, res) => {
+    const { matchid } = req.body;
+
+    try {
+        // Find the match in MatchedOrgans
+        const match = await MatchedOrgans.findById(matchid);
+
+        if (!match) {
+            return res.status(404).json({ message: "Match not found" });
+        }
+
+        console.log("Match found:", match);
+
+        // Update the status in MatchedOrgans
+        match.status = "approved";
+        await match.save();
+        console.log("Match status updated:", match);
+
+        // Update the status in Request
+        const requestUpdate = await Request.findOneAndUpdate(
+            { receipientid: match.receipientid, organ: match.organ },
+            { requested_status: "approved" },
+            { new: true, runValidators: true }
+        );
+
+        if (!requestUpdate) {
+            return res.status(404).json({ message: "Request not found" });
+        }
+
+        console.log("Request status updated:", requestUpdate);
+
+        // Update the status in Donation
+        const donationUpdate = await Donation.findOneAndUpdate(
+            { donorid: match.donorid, organ: match.organ },
+            { donation_status: "approved" },
+            { new: true, runValidators: true }
+        );
+
+        if (!donationUpdate) {
+            return res.status(404).json({ message: "Donation not found" });
+        }
+
+        console.log("Donation status updated:", donationUpdate);
+
+        // Find the hospital email
+        const hospital = await User.findById(match.hospitalid);
+        if (!hospital) {
+            return res.status(404).json({ message: "Hospital not found" });
+        }
+
+        console.log("Hospital found:", hospital);
+
+        // Configure Nodemailer
+        let transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "organbank2025@gmail.com", // Replace with your Gmail
+                pass: "vhsb vvss vlyz fooj"  // Use an App Password instead of your actual password
+            }
+        });
+
+        // Send email to the hospital
+        let mailOptions = {
+            from: "organbank2025@gmail.com",
+            to: hospital.email,
+            subject: "Organ Match Found",
+            text: `A match has been found for the recipient with ID ${match.receipientid} for the organ ${match.organ}.`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error("Error sending email:", error);
+            } else {
+                console.log("Email sent:", info.response);
+            }
+        });
+
+        return res.status(200).json({
+            message: "Match approved successfully and email sent to the hospital",
+            match,
+            request: requestUpdate,
+            donation: donationUpdate
+        });
+    } catch (error) {
+        console.error("Error approving match:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};

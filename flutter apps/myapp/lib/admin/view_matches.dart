@@ -22,7 +22,7 @@ class _ViewMatchesPageState extends State<ViewMatchesPage> {
 
   Future<void> approveMatch(String matchId) async {
     try {
-      // await adminService.approveMatch(matchId);
+      await adminService.approveMatch(matchId);
       setState(() {});
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
