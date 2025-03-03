@@ -40,4 +40,6 @@ router.get("/getDonations/:donorId", userController.getDonations);
 router.get("/getRequests/:receipientId", userController.getRequests);
 router.put("/updateDonationStatus/:donationId", userController.updateDonationStatus);
 router.post("/approveMatch", userController.approveMatch);
+router.get("/approvedMatches/:hospitalId", userController.approvedMatches);
+router.post("/sendTestScheduleEmail", userController.sendTestScheduleEmail);
 module.exports = router;

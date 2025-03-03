@@ -82,9 +82,9 @@ class _ViewDonationStatusPageState extends State<ViewDonationStatusPage> {
                     subtitle: Text(
                       'Status: ${donation['availability_status'] == 'available' ? 'Available' : 'Not Available'}',
                     ),
-                    trailing: donation['donation_status'] == 'approved'
+                    trailing: donation['donation_status'] != 'pending'
                         ? Text(
-                            'Approved',
+                            '${donation['donation_status']}',
                             style: TextStyle(color: Colors.green),
                           )
                         : TextButton(

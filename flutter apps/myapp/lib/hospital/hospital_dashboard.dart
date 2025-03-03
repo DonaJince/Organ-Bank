@@ -41,6 +41,12 @@ class HospitalDashboardPage extends StatelessWidget {
                     icon: Icons.schedule,
                     color: Colors.orange,
                     onTap: () {
+
+                      Navigator.pushNamed(
+                        context,
+                        '/testSchedule',
+                        arguments: userId, // Pass the user ID
+                      );
                       // Navigate to Schedule Compatibility Test screen
                     },
                   ),

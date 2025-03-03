@@ -256,4 +256,37 @@ Future<List<Map<String, dynamic>>> getDonations(String donorId) async {
       throw Exception('Failed to fetch requests');
     }
   }
+
+Future<List<Map<String, dynamic>>> getApprovedMatches(String hospitalId) async {
+  try {
+    final response = await dio.get("${baseUrl}approvedMatches/$hospitalId");
+    print("Approved matches response: ${response.data}");
+
+    if (response.statusCode == 200 && response.data is List) {
+      return (response.data as List)
+          .map((match) => Map<String, dynamic>.from(match as Map<String, dynamic>))
+          .toList();
+    } else {
+      throw Exception('Failed to load approved matches');
+    }
+  } catch (e) {
+    print("Error fetching approved matches: $e");
+    throw Exception('Failed to fetch approved matches');
+  }
+}
+
+
+
+  Future<Response> sendTestScheduleEmail(String matchId, String emailBody) async {
+    try {
+      final response = await dio.post(
+        "${baseUrl}sendTestScheduleEmail",
+        data: {"matchId": matchId, "emailBody": emailBody},
+      );
+      return response;
+    } catch (e) {
+      print("Error sending test schedule email: $e");
+      throw Exception('Failed to send test schedule email');
+    }
+  }
 }
