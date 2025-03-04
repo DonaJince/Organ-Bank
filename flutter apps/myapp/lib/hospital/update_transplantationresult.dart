@@ -61,7 +61,7 @@ class _UpdateTransplantationResultPageState extends State<UpdateTransplantationR
         title: Text('Update Transplantation Result'),
       ),
       body: transplantScheduledMatches.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: Text('There are no transplantation results to update.'))
           : ListView.builder(
               itemCount: transplantScheduledMatches.length,
               itemBuilder: (context, index) {

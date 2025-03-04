@@ -79,7 +79,7 @@ class _ScheduleTestPageState extends State<ScheduleTestPage> {
         title: Text('Schedule Test'),
       ),
       body: approvedMatches.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: Text('There are no approved matches.'))
           : ListView.builder(
               itemCount: approvedMatches.length,
               itemBuilder: (context, index) {

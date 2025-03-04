@@ -66,7 +66,7 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
         title: Text('Schedule Transplantation'),
       ),
       body: successMatches.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: Text('There are no matches for scheduling transplantation.'))
           : ListView.builder(
               itemCount: successMatches.length,
               itemBuilder: (context, index) {
@@ -102,5 +102,13 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
               },
             ),
     );
+  }
+
+  @override
+  void dispose() {
+    for (var controller in emailControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 }

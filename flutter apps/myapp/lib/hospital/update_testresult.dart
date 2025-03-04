@@ -61,7 +61,7 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
         title: Text('Update Test Result'),
       ),
       body: testScheduledMatches.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: Text('There are no test results to update.'))
           : ListView.builder(
               itemCount: testScheduledMatches.length,
               itemBuilder: (context, index) {
