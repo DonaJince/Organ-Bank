@@ -7,18 +7,16 @@ class ViewComplaintsPage extends StatefulWidget {
 }
 
 class _ViewComplaintsPageState extends State<ViewComplaintsPage> {
-  final UserServices userService =
-      UserServices(); // Create UserService instance
+  final UserServices userService = UserServices(); // Create UserService instance
 
   Future<List<dynamic>> fetchComplaints() async {
-    try {
-      final response = await userService
-          .getComplaints(); // Use UserService to get complaints
-      return response;
-    } catch (e) {
-      throw Exception("Failed to load complaints");
-    }
+  try {
+    final response = await userService.getComplaints();
+    return response["complaints"]; // Extract the complaints list
+  } catch (e) {
+    throw Exception("Failed to load complaints");
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +51,18 @@ class _ViewComplaintsPageState extends State<ViewComplaintsPage> {
                 child: ListTile(
                   title: Text("ID: ${complaint["_id"]}",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text("Complaint: ${complaint["complaint"]}",
-                      style: TextStyle(color: Colors.teal)),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Name: ${complaint["userName"]}",
+                          style: TextStyle(color: Colors.black87)),
+                      Text("Email: ${complaint["userEmail"]}",
+                          style: TextStyle(color: Colors.black87)),
+                      SizedBox(height: 6),
+                      Text("Complaint: ${complaint["complaint"]}",
+                          style: TextStyle(color: Colors.teal)),
+                    ],
+                  ),
                 ),
               );
             },

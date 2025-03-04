@@ -219,22 +219,21 @@ exports.getReceipientDetailsById = (req, res) => {
     });
 };
 
-
 exports.getFeedback = async (req, res) => {
     try {
         console.log("Fetching all feedback details");
 
         // Find all feedbacks and populate user details
         const feedbacks = await Feedback.find().populate({
-            path: 'userid',
+            path: 'userId',
             model: 'User',
             select: 'name email'
         });
 
         const formattedFeedbacks = feedbacks.map(feedback => ({
             ...feedback.toObject(),
-            userName: feedback.userid.name,
-            userEmail: feedback.userid.email
+            userName: feedback.userId.name,
+            userEmail: feedback.userId.email
         }));
 
         return res.status(200).json({ feedbacks: formattedFeedbacks });
@@ -250,15 +249,15 @@ exports.getComplaint = async (req, res) => {
 
         // Find all complaints and populate user details
         const complaints = await Complaint.find().populate({
-            path: 'userid',
+            path: 'userId',
             model: 'User',
             select: 'name email'
         });
 
         const formattedComplaints = complaints.map(complaint => ({
             ...complaint.toObject(),
-            userName: complaint.userid.name,
-            userEmail: complaint.userid.email
+            userName: complaint.userId.name,
+            userEmail: complaint.userId.email
         }));
 
         return res.status(200).json({ complaints: formattedComplaints });
@@ -419,13 +418,13 @@ exports.updateHospitalProfile = async (req, res) => {
 
 exports.submitFeedback = async (req, res) => {
     try {
-        const { email, feedback } = req.body;
+        const { userId, feedback } = req.body;
 
-        if (!email || !feedback) {
-            return res.status(400).json({ status: "error", message: "Email and feedback are required" });
+        if (!userId || !feedback) {
+            return res.status(400).json({ status: "error", message: "userid and feedback are required" });
         }
 
-        const newFeedback = new Feedback({ email, feedback });
+        const newFeedback = new Feedback({ userId, feedback });
         await newFeedback.save();
 
         console.log("Feedback saved successfully");
@@ -442,13 +441,13 @@ exports.submitFeedback = async (req, res) => {
 
 exports.submitComplaint = async (req, res) => {
     try {
-        const { email, complaint } = req.body;
+        const { userId, complaint } = req.body;
 
-        if (!email || !complaint) {
-            return res.status(400).json({ status: "error", message: "Email and complaint are required" });
+        if (!userId || !complaint) {
+            return res.status(400).json({ status: "error", message: "userid and complaint are required" });
         }
 
-        const newComplaint = new Complaint({ email, complaint });
+        const newComplaint = new Complaint({ userId, complaint });
         await newComplaint.save();
 
         console.log("Complaint saved successfully");

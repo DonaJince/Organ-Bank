@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 var feedbackSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        trim: true
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     },
     feedback: {
         type: String,

@@ -7,15 +7,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ComplaintForm(email: 'example@example.com'), // Provide the email parameter
+      home: ComplaintForm(userId: 'example@example.com'), // Provide the email parameter
     );
   }
 }
 
 class ComplaintForm extends StatefulWidget {
-  final String email;
+  final String userId;
 
-  ComplaintForm({required this.email});
+  ComplaintForm({required this.userId});
   @override
   _ComplaintFormState createState() => _ComplaintFormState();
 }
@@ -28,7 +28,7 @@ class _ComplaintFormState extends State<ComplaintForm> {
   final String complaint = _controller.text;
   if (complaint.isNotEmpty) {
     try {
-      final response = await userServices.submitComplaint(widget.email, complaint);
+      final response = await userServices.submitComplaint(widget.userId, complaint);
       
       // ✅ Check for "status": "success"
       if (response['status'] == 'success') { 

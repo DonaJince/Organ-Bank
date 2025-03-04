@@ -48,12 +48,12 @@ class UserServices {
         options: options);
   }
 
-  submitFeedback(String email, String feedback) async {
+  submitFeedback(String userId, String feedback) async {
     final url = '$baseUrl/submitFeedback'; // Ensure correct API endpoint
     try {
       final response = await dio.post(
         url,
-        data: {'email': email, 'feedback': feedback},
+        data: {'userId': userId, 'feedback': feedback},
         options: Options(headers: {
           "Content-Type": "application/json"
         }), // Ensure correct headers
@@ -67,12 +67,12 @@ class UserServices {
     }
   }
 
-  submitComplaint(String email, String complaint) async {
+  submitComplaint(String userId, String complaint) async {
     final url = '$baseUrl/submitComplaint'; // Ensure correct API endpoint
     try {
       final response = await dio.post(
         url,
-        data: {'email': email, 'complaint': complaint},
+        data: {'userId': userId, 'complaint': complaint},
         options: Options(headers: {
           "Content-Type": "application/json"
         }), // Ensure correct headers

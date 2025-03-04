@@ -97,7 +97,7 @@ class HospitalDashboardPage extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         '/submitFeedback',
-                        arguments: email, // Pass the user ID
+                        arguments: userId, // Pass the user ID
                       );
                     },
                   ),
@@ -109,7 +109,7 @@ class HospitalDashboardPage extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         '/submitComplaint',
-                        arguments: email, // Pass the user ID
+                        arguments: userId, // Pass the user ID
                       );
                     },
                   ),

@@ -10,14 +10,13 @@ class _ViewFeedbacksPageState extends State<ViewFeedbacksPage> {
   final UserServices userService = UserServices(); // Create UserService instance
 
   Future<List<dynamic>> fetchFeedbacks() async {
-    try {
-      final response =
-          await userService.getFeedback(); // Use UserService to get feedback
-      return response;
-    } catch (e) {
-      throw Exception("Failed to load feedbacks");
-    }
+  try {
+    final response = await userService.getFeedback();
+    return response["feedbacks"]; // Extract the feedback list
+  } catch (e) {
+    throw Exception("Failed to load feedbacks");
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +52,18 @@ class _ViewFeedbacksPageState extends State<ViewFeedbacksPage> {
                 child: ListTile(
                   title: Text("ID: ${feedback["_id"]}",
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text("Feedback: ${feedback["feedback"]}",
-                      style: TextStyle(color: Colors.teal)),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Name: ${feedback["userName"]}",
+                          style: TextStyle(color: Colors.black87)),
+                      Text("Email: ${feedback["userEmail"]}",
+                          style: TextStyle(color: Colors.black87)),
+                      SizedBox(height: 6),
+                      Text("Feedback: ${feedback["feedback"]}",
+                          style: TextStyle(color: Colors.teal)),
+                    ],
+                  ),
                 ),
               );
             },

@@ -59,9 +59,9 @@ class MyApp extends StatelessWidget {
         '/updateHospitalProfile': (context) => UpdateHospitalProfilePage(
             id: ModalRoute.of(context)!.settings.arguments as String),
         '/submitFeedback': (context) => FeedbackForm(
-            email: ModalRoute.of(context)!.settings.arguments as String),
+            userId: ModalRoute.of(context)!.settings.arguments as String),
         '/submitComplaint': (context) => ComplaintForm(
-            email: ModalRoute.of(context)!.settings.arguments as String),
+            userId: ModalRoute.of(context)!.settings.arguments as String),
         '/submitDonation': (context) => MakeDonationsPage(
             id: ModalRoute.of(context)!.settings.arguments as String),
         '/submitRequest': (context) => MakeRequestPage(
