@@ -2,22 +2,19 @@ const mongoose = require("mongoose");
 var matchedorganSchema = new mongoose.Schema({
 
     donorid:{
-        type:String,
-        required:true,
-        maxlength:32,
-        trim:true
+       type: mongoose.Schema.Types.ObjectId,
+               ref: "User",
+               required: true
     },
     receipientid:{
-        type:String,
-        required:true,
-        maxlength:32,
-        trim:true
+        type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+                required: true
     },
     hospitalid:{
-        type:String,
-        required:true,
-        maxlength:32,
-        trim:true        
+        type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+                required: true     
     },
     organ:{
         type:String,

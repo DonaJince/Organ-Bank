@@ -37,6 +37,10 @@ var transplantationSchema = new mongoose.Schema({
         maxlength:32,
         trim:true,  
         default:"success"
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
     }
 })
 module.exports = mongoose.model("Transplantation",transplantationSchema);
