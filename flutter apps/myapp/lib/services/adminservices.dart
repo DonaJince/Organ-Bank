@@ -116,4 +116,15 @@ class AdminServices {
       return {'success': false, 'message': 'Failed to approve match'};
     }
   }
+
+  getTransplantations()async{
+    try {
+      final response = await dio.get("${baseUrl}getTransplantations");
+      print("Transplantations response: ${response.data}"); // Debugging
+      return response.data; // Ensure it returns the JSON data correctly
+    } catch (e) {
+      print("Error fetching transplantations: $e");
+      return {'success': false, 'message': 'Failed to fetch transplantations'};
+    }
+  }
 }

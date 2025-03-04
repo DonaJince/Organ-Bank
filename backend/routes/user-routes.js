@@ -48,4 +48,5 @@ router.get("/successMatches/:hospitalId", userController.successMatches);
 router.post("/sendTransplantationScheduleEmail", userController.sendTransplantationScheduleEmail);
 router.get("/transplantationScheduledMatches/:hospitalId", userController.transplantationScheduledMatches);
 router.put("/updateTransplantationResult/:matchId", userController.updateTransplantationResult);
+router.get("/getTransplantations", userController.getTransplantations);
 module.exports = router;

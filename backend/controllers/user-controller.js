@@ -1606,3 +1606,38 @@ exports.updateTransplantationResult = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
+exports.getTransplantations = async (req, res) => {
+    try {
+        console.log("Fetching all transplantations");
+
+        const transplantations = await Transplantation.find()
+            .populate({ path: 'donorid', model: 'User', select: 'name email' })
+            .populate({ path: 'receipientid', model: 'User', select: 'name email' })
+            .populate({ path: 'hospitalid', model: 'User', select: 'name email' })
+            .lean();
+
+        if (!transplantations || transplantations.length === 0) {
+            console.log("No transplantations found, returning an empty array.");
+            return res.status(200).json([]); // Ensures response is always an array
+        }
+
+        // Format the transplantations to include the names and emails
+        const formattedTransplantations = transplantations.map(transplantation => ({
+            ...transplantation,
+            _id: transplantation._id.toString(),
+            donorName: transplantation.donorid.name,
+            donorEmail: transplantation.donorid.email,
+            receipientName: transplantation.receipientid.name,
+            receipientEmail: transplantation.receipientid.email,
+            hospitalName: transplantation.hospitalid.name,
+            hospitalEmail: transplantation.hospitalid.email
+        }));
+
+        console.log("Transplantations found:", formattedTransplantations);
+        return res.status(200).json(formattedTransplantations);
+    } catch (error) {
+        console.error("Error fetching transplantations:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
