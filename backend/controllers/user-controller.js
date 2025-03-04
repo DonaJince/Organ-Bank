@@ -933,17 +933,27 @@ exports.approvedMatches = async (req, res) => {
         const { hospitalId } = req.params;
         console.log("Fetching approved matches for hospitalId:", hospitalId);
 
-        const approvedMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "approved" }).lean();
+        const approvedMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "approved" })
+            .populate({ path: 'donorid', model: 'User', select: 'name email' })
+            .populate({ path: 'receipientid', model: 'User', select: 'name email' })
+            .populate({ path: 'hospitalid', model: 'User', select: 'name email' })
+            .lean();
 
         if (!approvedMatches || approvedMatches.length === 0) {
             console.log("No approved matches found, returning an empty array.");
             return res.status(200).json([]); // Ensures response is always an array
         }
 
-        // Convert _id to string
+        // Format the matches to include the names and emails
         const formattedMatches = approvedMatches.map(match => ({
             ...match,
-            _id: match._id.toString()
+            _id: match._id.toString(),
+            donorName: match.donorid.name,
+            donorEmail: match.donorid.email,
+            receipientName: match.receipientid.name,
+            receipientEmail: match.receipientid.email,
+            hospitalName: match.hospitalid.name,
+            hospitalEmail: match.hospitalid.email
         }));
 
         console.log("Approved matches found:", formattedMatches);
@@ -953,6 +963,7 @@ exports.approvedMatches = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
 
 
 exports.sendTestScheduleEmail = async (req, res) => {
@@ -1082,17 +1093,27 @@ exports.testScheduledMatches = async (req, res) => {
         const { hospitalId } = req.params;
         console.log("Fetching test scheduled matches for hospitalId:", hospitalId);
 
-        const testScheduledMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "testscheduled" }).lean();
+        const testScheduledMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "testscheduled" })
+            .populate({ path: 'donorid', model: 'User', select: 'name email' })
+            .populate({ path: 'receipientid', model: 'User', select: 'name email' })
+            .populate({ path: 'hospitalid', model: 'User', select: 'name email' })
+            .lean();
 
         if (!testScheduledMatches || testScheduledMatches.length === 0) {
             console.log("No test scheduled matches found, returning an empty array.");
             return res.status(200).json([]); // Ensures response is always an array
         }
 
-        // Convert _id to string
+        // Format the matches to include the names and emails
         const formattedMatches = testScheduledMatches.map(match => ({
             ...match,
-            _id: match._id.toString()
+            _id: match._id.toString(),
+            donorName: match.donorid.name,
+            donorEmail: match.donorid.email,
+            receipientName: match.receipientid.name,
+            receipientEmail: match.receipientid.email,
+            hospitalName: match.hospitalid.name,
+            hospitalEmail: match.hospitalid.email
         }));
 
         console.log("Test scheduled matches found:", formattedMatches);
@@ -1248,17 +1269,27 @@ exports.successMatches = async (req, res) => {
         const { hospitalId } = req.params;
         console.log("Fetching success matches for hospitalId:", hospitalId);
 
-        const successMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "success" }).lean();
+        const successMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "success" })
+            .populate({ path: 'donorid', model: 'User', select: 'name email' })
+            .populate({ path: 'receipientid', model: 'User', select: 'name email' })
+            .populate({ path: 'hospitalid', model: 'User', select: 'name email' })
+            .lean();
 
         if (!successMatches || successMatches.length === 0) {
             console.log("No success matches found, returning an empty array.");
             return res.status(200).json([]); // Ensures response is always an array
         }
 
-        // Convert _id to string
+        // Format the matches to include the names and emails
         const formattedMatches = successMatches.map(match => ({
             ...match,
-            _id: match._id.toString()
+            _id: match._id.toString(),
+            donorName: match.donorid.name,
+            donorEmail: match.donorid.email,
+            receipientName: match.receipientid.name,
+            receipientEmail: match.receipientid.email,
+            hospitalName: match.hospitalid.name,
+            hospitalEmail: match.hospitalid.email
         }));
 
         console.log("Success matches found:", formattedMatches);
@@ -1267,7 +1298,7 @@ exports.successMatches = async (req, res) => {
         console.error("Error fetching success matches:", error);
         return res.status(500).json({ message: "Internal server error" });
     }
-}
+};
 exports.sendTransplantationScheduleEmail = async (req, res) => {
     const { matchId, emailBody } = req.body;
 
@@ -1391,25 +1422,35 @@ exports.sendTransplantationScheduleEmail = async (req, res) => {
     }
 };
 
-exports.transplantationScheduledMatches= async (req, res) => {
+exports.transplantationScheduledMatches = async (req, res) => {
     try {
         const { hospitalId } = req.params;
         console.log("Fetching transplantation scheduled matches for hospitalId:", hospitalId);
 
-        const transplantationScheduledMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "transplantationscheduled" }).lean();
+        const transplantationScheduledMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "transplantationscheduled" })
+            .populate({ path: 'donorid', model: 'User', select: 'name email' })
+            .populate({ path: 'receipientid', model: 'User', select: 'name email' })
+            .populate({ path: 'hospitalid', model: 'User', select: 'name email' })
+            .lean();
 
         if (!transplantationScheduledMatches || transplantationScheduledMatches.length === 0) {
             console.log("No transplantation scheduled matches found, returning an empty array.");
             return res.status(200).json([]); // Ensures response is always an array
         }
 
-        // Convert _id to string
+        // Format the matches to include the names and emails
         const formattedMatches = transplantationScheduledMatches.map(match => ({
             ...match,
-            _id: match._id.toString()
+            _id: match._id.toString(),
+            donorName: match.donorid.name,
+            donorEmail: match.donorid.email,
+            receipientName: match.receipientid.name,
+            receipientEmail: match.receipientid.email,
+            hospitalName: match.hospitalid.name,
+            hospitalEmail: match.hospitalid.email
         }));
 
-        console.log("transplantation scheduled matches found:", formattedMatches);
+        console.log("Transplantation scheduled matches found:", formattedMatches);
         return res.status(200).json(formattedMatches);
     } catch (error) {
         console.error("Error fetching transplantation scheduled matches:", error);

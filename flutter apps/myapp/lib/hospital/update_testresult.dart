@@ -68,14 +68,71 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
                 final match = testScheduledMatches[index];
                 return Card(
                   margin: EdgeInsets.all(8.0),
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Match ID: ${match['_id']}'),
-                        Text('Donor ID: ${match['donorid']}'),
-                        Text('Recipient ID: ${match['receipientid']}'),
+                        Text(
+                          "Organ: ${match["organ"]}",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          "Donor Details",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Divider(),
+                        Text("ID: ${match["donorid"]["_id"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Name: ${match["donorName"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Email: ${match["donorEmail"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        SizedBox(height: 6),
+                        Text(
+                          "Recipient Details",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Divider(),
+                        Text("ID: ${match["receipientid"]["_id"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Name: ${match["receipientName"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Email: ${match["receipientEmail"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        SizedBox(height: 6),
+                        Text(
+                          "Hospital Details",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Divider(),
+                        Text("ID: ${match["hospitalid"]["_id"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Name: ${match["hospitalName"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Email: ${match["hospitalEmail"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
                         SizedBox(height: 8.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

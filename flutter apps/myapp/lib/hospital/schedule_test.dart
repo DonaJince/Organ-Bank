@@ -33,7 +33,8 @@ class _ScheduleTestPageState extends State<ScheduleTestPage> {
         }).toList();
 
         emailControllers = {
-          for (var match in approvedMatches) match['_id']: TextEditingController()
+          for (var match in approvedMatches)
+            match['_id']: TextEditingController()
         };
       });
     } catch (e) {
@@ -54,7 +55,8 @@ class _ScheduleTestPageState extends State<ScheduleTestPage> {
     }
 
     try {
-      final response = await userServices.sendTestScheduleEmail(matchId, emailBody);
+      final response =
+          await userServices.sendTestScheduleEmail(matchId, emailBody);
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Email sent successfully.')),
@@ -86,14 +88,81 @@ class _ScheduleTestPageState extends State<ScheduleTestPage> {
                 final match = approvedMatches[index];
                 return Card(
                   margin: EdgeInsets.all(8.0),
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Match ID: ${match['_id']}'),
-                        Text('Donor ID: ${match['donorid']}'),
-                        Text('Recipient ID: ${match['receipientid']}'),
+                        Text(
+                          "Organ: ${match["organ"]}",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          "Donor Details",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Divider(),
+                        Text("ID: ${match["donorid"]["_id"]}",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Name: ${match["donorName"]}",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Email: ${match["donorEmail"]}",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black87)),
+                        SizedBox(height: 6),
+                        Text(
+                          "Recipient Details",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Divider(),
+                        Text("ID: ${match["receipientid"]["_id"]}",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Name: ${match["receipientName"]}",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Email: ${match["receipientEmail"]}",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black87)),
+                        SizedBox(height: 6),
+                        Text(
+                          "Hospital Details",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Divider(),
+                        Text("ID: ${match["hospitalid"]["_id"]}",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Name: ${match["hospitalName"]}",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Email:${match["hospitalEmail"]}",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.black87)),
+                        SizedBox(height: 6),
                         TextField(
                           controller: emailControllers[match['_id']],
                           decoration: InputDecoration(
