@@ -220,31 +220,52 @@ exports.getReceipientDetailsById = (req, res) => {
 };
 
 
-exports.getFeedback = (req, res) => {
-    console.log("Fetching all feedback details"); // Debugging
+exports.getFeedback = async (req, res) => {
+    try {
+        console.log("Fetching all feedback details");
 
-    Feedback.find()
-        .then((feedbacks) => {
-            return res.status(200).json(feedbacks);
-            
-        })
-        .catch((error) => {
-            console.error("Error fetching feedback:", error);
-            return res.status(500).json({ message: "Internal server error" });
+        // Find all feedbacks and populate user details
+        const feedbacks = await Feedback.find().populate({
+            path: 'userid',
+            model: 'User',
+            select: 'name email'
         });
+
+        const formattedFeedbacks = feedbacks.map(feedback => ({
+            ...feedback.toObject(),
+            userName: feedback.userid.name,
+            userEmail: feedback.userid.email
+        }));
+
+        return res.status(200).json({ feedbacks: formattedFeedbacks });
+    } catch (error) {
+        console.error("Error fetching feedback:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
 };
 
-exports.getComplaint = (req, res) => {
-    console.log("Fetching all complaint details"); // Debugging
+exports.getComplaint = async (req, res) => {
+    try {
+        console.log("Fetching all complaint details");
 
-    Complaint.find()
-        .then((complaints) => { 
-            return res.status(200).json(complaints);
-        })
-        .catch((error) => {
-            console.error("Error fetching complaints:", error);
-            return res.status(500).json({ message: "Internal server error" });
+        // Find all complaints and populate user details
+        const complaints = await Complaint.find().populate({
+            path: 'userid',
+            model: 'User',
+            select: 'name email'
         });
+
+        const formattedComplaints = complaints.map(complaint => ({
+            ...complaint.toObject(),
+            userName: complaint.userid.name,
+            userEmail: complaint.userid.email
+        }));
+
+        return res.status(200).json({ complaints: formattedComplaints });
+    } catch (error) {
+        console.error("Error fetching complaints:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
 };
 
 
@@ -700,7 +721,21 @@ exports.getPendingMatches = async (req, res) => {
             return res.status(400).json({ message: "No valid pending matches found" });
         }
 
-        return res.status(200).json({ pendingMatches: validPendingMatches });
+        // Populate the donor, recipient, and hospital details
+        const populatedMatches = await MatchedOrgans.populate(validPendingMatches, [
+            { path: 'donorid', model: 'User', select: 'name' },
+            { path: 'receipientid', model: 'User', select: 'name' },
+            { path: 'hospitalid', model: 'User', select: 'name' }
+        ]);
+
+        const formattedMatches = populatedMatches.map(match => ({
+            ...match.toObject(),
+            donorName: match.donorid.name,
+            receipientName: match.receipientid.name,
+            hospitalName: match.hospitalid.name
+        }));
+
+        return res.status(200).json({ pendingMatches: formattedMatches });
     } catch (error) {
         console.error("Error fetching pending matches:", error);
         return res.status(500).json({ message: "Internal server error" });

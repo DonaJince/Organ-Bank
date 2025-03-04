@@ -88,12 +88,48 @@ class _ViewMatchesPageState extends State<ViewMatchesPage> {
                         ),
                       ),
                       SizedBox(height: 6),
-                      Text("Donor ID: ${match["donorid"]}",
+                      Text(
+                        "Donor Details",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Divider(),
+                      Text("ID: ${match["donorid"]["_id"]}",
                           style: TextStyle(fontSize: 16, color: Colors.black87)),
-                      Text("Recipient ID: ${match["receipientid"]}",
+                      Text("Name: ${match["donorName"]}",
                           style: TextStyle(fontSize: 16, color: Colors.black87)),
-                      Text("Hospital ID: ${match["hospitalid"]}",
+                      SizedBox(height: 6),
+                      Text(
+                        "Recipient Details",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Divider(),
+                      Text("ID: ${match["receipientid"]["_id"]}",
                           style: TextStyle(fontSize: 16, color: Colors.black87)),
+                      Text("Name: ${match["receipientName"]}",
+                          style: TextStyle(fontSize: 16, color: Colors.black87)),
+                      SizedBox(height: 6),
+                      Text(
+                        "Hospital Details",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Divider(),
+                      Text("ID: ${match["hospitalid"]["_id"]}",
+                          style: TextStyle(fontSize: 16, color: Colors.black87)),
+                      Text("Name: ${match["hospitalName"]}",
+                          style: TextStyle(fontSize: 16, color: Colors.black87)),
+                      SizedBox(height: 6),
                       Text(
                         "Status: ${match["status"].toUpperCase()}",
                         style: TextStyle(
@@ -110,8 +146,8 @@ class _ViewMatchesPageState extends State<ViewMatchesPage> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
