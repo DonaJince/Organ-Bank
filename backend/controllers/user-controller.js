@@ -5,6 +5,7 @@ const Complaint = require("../models/complaint");
 const Donation = require("../models/donated_organs");
 const Request = require("../models/requested_organs");
 const MatchedOrgans = require("../models/matched_organs");
+const Transplantation = require("../models/transplantation");
 const nodemailer = require("nodemailer");
 
 exports.sendRegistrationApprovalEmail = async (req, res) => {
@@ -1427,6 +1428,20 @@ exports.updateTransplantationResult = async (req, res) => {
         }
 
         console.log("Donation status updated to 'completed':", donationUpdate);
+
+        // Store the transplantation details in the Transplantation collection
+        const newTransplantation = new Transplantation({
+            matchid: match._id,
+            donorid: match.donorid,
+            receipientid: match.receipientid,
+            hospitalid: match.hospitalid,
+            organ: match.organ,
+            status: status === "success" ? "transplantationsuccess" : "transplantationfailed",
+            date: new Date()
+        });
+
+        await newTransplantation.save();
+        console.log("Transplantation details saved:", newTransplantation);
 
         // Find the hospital email
         const hospital = await User.findById(match.hospitalid);

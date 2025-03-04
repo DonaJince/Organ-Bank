@@ -34,33 +34,37 @@ class _VerifyDonorPageState extends State<VerifyDonorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: donorDetails.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(donorDetails[index]['name']),
-                  subtitle: Text(donorDetails[index]['email']),
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => GetDonorDetails(
-                                  id: donorDetails[index]["_id"],
-                                )),
+      appBar: AppBar(
+        title: Text('Verify Donors'),
+      ),
+      body: donorDetails.isEmpty
+          ? Center(child: Text('No pending donors.'))
+          : Column(
+              children: <Widget>[
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: donorDetails.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(donorDetails[index]['name']),
+                        subtitle: Text(donorDetails[index]['email']),
+                        trailing: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => GetDonorDetails(
+                                        id: donorDetails[index]["_id"],
+                                      )),
+                            );
+                          },
+                          child: Text('Verify'),
+                        ),
                       );
                     },
-                    child: Text('Verify'),
                   ),
-                );
-              },
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

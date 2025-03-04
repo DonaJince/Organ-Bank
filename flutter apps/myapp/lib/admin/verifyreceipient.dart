@@ -34,33 +34,37 @@ class _VerifyReceipientPageState extends State<VerifyReceipientPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: receipientDetails.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(receipientDetails[index]['name']),
-                  subtitle: Text(receipientDetails[index]['email']),
-                  trailing: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => GetReceipientDetails(
-                                  id: receipientDetails[index]["_id"],
-                                )),
+      appBar: AppBar(
+        title: Text('Verify Recipients'),
+      ),
+      body: receipientDetails.isEmpty
+          ? Center(child: Text('No pending recipients.'))
+          : Column(
+              children: <Widget>[
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: receipientDetails.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(receipientDetails[index]['name']),
+                        subtitle: Text(receipientDetails[index]['email']),
+                        trailing: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => GetReceipientDetails(
+                                        id: receipientDetails[index]["_id"],
+                                      )),
+                            );
+                          },
+                          child: Text('Verify'),
+                        ),
                       );
                     },
-                    child: Text('Verify'),
                   ),
-                );
-              },
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }
