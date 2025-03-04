@@ -11,110 +11,102 @@ class AdminDashboardPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          // Added SingleChildScrollView
           child: ListView(
-            shrinkWrap:
-                true, // Added shrinkWrap to make ListView work inside SingleChildScrollView
-            physics:
-                NeverScrollableScrollPhysics(), // Disable ListView's own scrolling
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
-              ElevatedButton(
+              DashboardButton(
+                text: 'Verify Donors',
+                icon: Icons.person_search,
                 onPressed: () {
                   Navigator.pushNamed(context, '/verifyDonors');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-                child: Text('Verify Donors'),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
+              DashboardButton(
+                text: 'Verify Recipients',
+                icon: Icons.person_add,
                 onPressed: () {
                   Navigator.pushNamed(context, '/verifyReceipients');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-                child: Text('Verify Receipients'),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
+              DashboardButton(
+                text: 'Verify Hospitals',
+                icon: Icons.local_hospital,
                 onPressed: () {
                   Navigator.pushNamed(context, '/verifyHospitals');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-                child: Text('Verify Hospital'),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
+              DashboardButton(
+                text: 'View Matches',
+                icon: Icons.view_list,
                 onPressed: () {
                   Navigator.pushNamed(context, '/viewMatches');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-                child: Text('View Matches'),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
+              DashboardButton(
+                text: 'Transplantation Results',
+                icon: Icons.assignment_turned_in,
                 onPressed: () {
                   Navigator.pushNamed(context, '/transplantationResults');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-                child: Text('Transplantation Results'),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
+              DashboardButton(
+                text: 'Generate Reports',
+                icon: Icons.insert_chart,
                 onPressed: () {
                   Navigator.pushNamed(context, '/generateReports');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-                child: Text('Generate Reports'),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
+              DashboardButton(
+                text: 'View Feedbacks',
+                icon: Icons.feedback,
                 onPressed: () {
                   Navigator.pushNamed(context, '/viewFeedbacks');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-                child: Text('View Feedbacks'),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
+              DashboardButton(
+                text: 'View Complaints',
+                icon: Icons.report_problem,
                 onPressed: () {
                   Navigator.pushNamed(context, '/viewComplaints');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18, color: Colors.black),
-                ),
-                child: Text('View Complaints'),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class DashboardButton extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const DashboardButton({required this.text, required this.icon, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 28, color: Colors.white),
+      label: Text(
+        text,
+        style: TextStyle(fontSize: 20, color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.teal,
+        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );
