@@ -1042,3 +1042,477 @@ exports.sendTestScheduleEmail = async (req, res) => {
     }
 };
 
+exports.testScheduledMatches = async (req, res) => {
+    try {
+        const { hospitalId } = req.params;
+        console.log("Fetching test scheduled matches for hospitalId:", hospitalId);
+
+        const testScheduledMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "testscheduled" }).lean();
+
+        if (!testScheduledMatches || testScheduledMatches.length === 0) {
+            console.log("No test scheduled matches found, returning an empty array.");
+            return res.status(200).json([]); // Ensures response is always an array
+        }
+
+        // Convert _id to string
+        const formattedMatches = testScheduledMatches.map(match => ({
+            ...match,
+            _id: match._id.toString()
+        }));
+
+        console.log("Test scheduled matches found:", formattedMatches);
+        return res.status(200).json(formattedMatches);
+    } catch (error) {
+        console.error("Error fetching test scheduled matches:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+
+
+exports.updateTestResult = async (req, res) => {
+    const { matchId } = req.params;
+    const { status } = req.body;
+
+    console.log("Updating test result for matchId:", matchId, "with status:", status);
+
+    try {
+        // Update the status in MatchedOrgans
+        const match = await MatchedOrgans.findByIdAndUpdate(
+            matchId,
+            { status },
+            { new: true, runValidators: true }
+        );
+
+        if (!match) {
+            return res.status(404).json({ message: "Match not found" });
+        }
+
+        console.log("Match status updated:", match);
+
+        // Determine the new status for Donation and Request
+        const newStatus = status === "failure" ? "pending" : "matched";
+
+        // Update the status in Request
+        const requestUpdate = await Request.findOneAndUpdate(
+            { receipientid: match.receipientid, organ: match.organ },
+            { requested_status: newStatus },
+            { new: true, runValidators: true }
+        );
+
+        if (!requestUpdate) {
+            return res.status(404).json({ message: "Request not found" });
+        }
+
+        console.log("Request status updated:", requestUpdate);
+
+        // Update the status in Donation
+        const donationUpdate = await Donation.findOneAndUpdate(
+            { donorid: match.donorid, organ: match.organ },
+            { donation_status: newStatus },
+            { new: true, runValidators: true }
+        );
+
+        if (!donationUpdate) {
+            return res.status(404).json({ message: "Donation not found" });
+        }
+
+        console.log("Donation status updated:", donationUpdate);
+
+        // Find the hospital email
+        const hospital = await User.findById(match.hospitalid);
+        if (!hospital) {
+            return res.status(404).json({ message: "Hospital not found" });
+        }
+
+        console.log("Hospital found:", hospital);
+
+        // Find the donor email
+        const donor = await User.findById(match.donorid);
+        if (!donor) {
+            return res.status(404).json({ message: "Donor not found" });
+        }
+
+        console.log("Donor found:", donor);
+
+        // Find the recipient email
+        const recipient = await User.findById(match.receipientid);
+        if (!recipient) {
+            return res.status(404).json({ message: "Recipient not found" });
+        }
+
+        console.log("Recipient found:", recipient);
+
+        // Configure Nodemailer
+        let transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "organbank2025@gmail.com", // Replace with your Gmail
+                pass: "vhsb vvss vlyz fooj"  // Use an App Password instead of your actual password
+            }
+        });
+
+        // Email content based on the status
+        const emailSubject = status === "failure" ? "Test Result: Failure" : "Test Result: Success";
+        const emailBodyDonor = status === "failure"
+            ? `Dear ${donor.name},\n\nUnfortunately, the test for your donated organ (${match.organ}) has failed. Please contact the hospital for further details.\n\nBest regards,\nOrgan Bank`
+            : `Dear ${donor.name},\n\nThe test for your donated organ (${match.organ}) has been successful. Thank you for your generous donation.\n\nBest regards,\nOrgan Bank`;
+
+        const emailBodyRecipient = status === "failure"
+            ? `Dear ${recipient.name},\n\nUnfortunately, the test for the organ (${match.organ}) you requested has failed. Please contact the hospital for further details.\n\nBest regards,\nOrgan Bank`
+            : `Dear ${recipient.name},\n\nThe test for the organ (${match.organ}) you requested has been successful. Please contact the hospital for further details.\n\nBest regards,\nOrgan Bank`;
+
+        // Send email to the donor
+        let donorMailOptions = {
+            from: "organbank2025@gmail.com",
+            to: donor.email,
+            replyTo: hospital.email,
+            subject: emailSubject,
+            text: emailBodyDonor
+        };
+
+        transporter.sendMail(donorMailOptions, (error, info) => {
+            if (error) {
+                console.error("Error sending email to donor:", error);
+            } else {
+                console.log("Email sent to donor:", info.response);
+            }
+        });
+
+        // Send email to the recipient
+        let recipientMailOptions = {
+            from: "organbank2025@gmail.com",
+            to: recipient.email,
+            replyTo: hospital.email,
+            subject: emailSubject,
+            text: emailBodyRecipient
+        };
+
+        transporter.sendMail(recipientMailOptions, (error, info) => {
+            if (error) {
+                console.error("Error sending email to recipient:", error);
+            } else {
+                console.log("Email sent to recipient:", info.response);
+            }
+        });
+
+        return res.status(200).json({
+            message: "Test result updated successfully and emails sent to donor and recipient",
+            match,
+            request: requestUpdate,
+            donation: donationUpdate
+        });
+    } catch (error) {
+        console.error("Error updating test result:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+exports.successMatches = async (req, res) => {
+    try {
+        const { hospitalId } = req.params;
+        console.log("Fetching success matches for hospitalId:", hospitalId);
+
+        const successMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "success" }).lean();
+
+        if (!successMatches || successMatches.length === 0) {
+            console.log("No success matches found, returning an empty array.");
+            return res.status(200).json([]); // Ensures response is always an array
+        }
+
+        // Convert _id to string
+        const formattedMatches = successMatches.map(match => ({
+            ...match,
+            _id: match._id.toString()
+        }));
+
+        console.log("Success matches found:", formattedMatches);
+        return res.status(200).json(formattedMatches);
+    } catch (error) {
+        console.error("Error fetching success matches:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+exports.sendTransplantationScheduleEmail = async (req, res) => {
+    const { matchId, emailBody } = req.body;
+
+    try {
+        // Find the match in MatchedOrgans
+        const match = await MatchedOrgans.findById(matchId);
+
+        if (!match) {
+            return res.status(404).json({ message: "Match not found" });
+        }
+
+        console.log("Match found:", match);
+
+        // Update the status in MatchedOrgans to 'transplantationscheduled'
+        match.status = "transplantationscheduled";
+        await match.save();
+        console.log("Match status updated to 'transplantationscheduled':", match);
+
+        // Update the status in Request to 'transplantationscheduled'
+        const requestUpdate = await Request.findOneAndUpdate(
+            { receipientid: match.receipientid, organ: match.organ },
+            { requested_status: "transplantationscheduled" },
+            { new: true, runValidators: true }
+        );
+
+        if (!requestUpdate) {
+            return res.status(404).json({ message: "Request not found" });
+        }
+
+        console.log("Request status updated to 'transplantationscheduled':", requestUpdate);
+
+        // Update the status in Donation to 'transplantationscheduled'
+        const donationUpdate = await Donation.findOneAndUpdate(
+            { donorid: match.donorid, organ: match.organ },
+            { donation_status: "transplantationscheduled" },
+            { new: true, runValidators: true }
+        );
+
+        if (!donationUpdate) {
+            return res.status(404).json({ message: "Donation not found" });
+        }
+
+        console.log("Donation status updated to 'transplantationscheduled':", donationUpdate);
+
+        // Find the hospital email
+        const hospital = await User.findById(match.hospitalid);
+        if (!hospital) {
+            return res.status(404).json({ message: "Hospital not found" });
+        }
+
+        console.log("Hospital found:", hospital);
+
+        // Find the donor email
+        const donor = await User.findById(match.donorid);
+        if (!donor) {
+            return res.status(404).json({ message: "Donor not found" });
+        }
+
+        console.log("Donor found:", donor);
+
+        // Find the recipient email
+        const recipient = await User.findById(match.receipientid);
+        if (!recipient) {
+            return res.status(404).json({ message: "Recipient not found" });
+        }
+
+        console.log("Recipient found:", recipient);
+
+        // Configure Nodemailer
+        let transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "organbank2025@gmail.com", // Replace with your Gmail
+                pass: "vhsb vvss vlyz fooj"  // Use an App Password instead of your actual password
+            }
+        });
+
+        // Send email to the donor
+        let donorMailOptions = {
+            from: "organbank2025@gmail.com",
+            to: donor.email,
+            replyTo: hospital.email,
+            subject: "Transplantation Schedule Notification",
+            text: `Dear ${donor.name},\n\nA match has been found for your donated organ (${match.organ}). Thank you for your generous donation.\n\nTransplantation Schedule Details\n\n${emailBody}\n\nBest regards,\nOrgan Bank`
+        };
+
+        transporter.sendMail(donorMailOptions, (error, info) => {
+            if (error) {
+                console.error("Error sending email to donor:", error);
+            } else {
+                console.log("Email sent to donor:", info.response);
+            }
+        });
+
+        // Send email to the recipient
+        let recipientMailOptions = {
+            from: "organbank2025@gmail.com",
+            to: recipient.email,
+            replyTo: hospital.email,
+            subject: "Transplantation Schedule Notification",
+            text: `Dear ${recipient.name},\n\nA match has been found for your requested organ (${match.organ}). Please contact the hospital for further details.\n\nTransplantation Schedule Details\n\n${emailBody}\n\nBest regards,\nOrgan Bank`
+        };
+
+        transporter.sendMail(recipientMailOptions, (error, info) => {
+            if (error) {
+                console.error("Error sending email to recipient:", error);
+            } else {
+                console.log("Email sent to recipient:", info.response);
+            }
+        });
+
+        return res.status(200).json({
+            message: "Transplantation schedule emails sent successfully to donor and recipient, and status updated to 'transplantationscheduled'",
+            match,
+            request: requestUpdate,
+            donation: donationUpdate
+        });
+    } catch (error) {
+        console.error("Error sending transplantation schedule email:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+exports.transplantationScheduledMatches= async (req, res) => {
+    try {
+        const { hospitalId } = req.params;
+        console.log("Fetching transplantation scheduled matches for hospitalId:", hospitalId);
+
+        const transplantationScheduledMatches = await MatchedOrgans.find({ hospitalid: hospitalId, status: "transplantationscheduled" }).lean();
+
+        if (!transplantationScheduledMatches || transplantationScheduledMatches.length === 0) {
+            console.log("No transplantation scheduled matches found, returning an empty array.");
+            return res.status(200).json([]); // Ensures response is always an array
+        }
+
+        // Convert _id to string
+        const formattedMatches = transplantationScheduledMatches.map(match => ({
+            ...match,
+            _id: match._id.toString()
+        }));
+
+        console.log("transplantation scheduled matches found:", formattedMatches);
+        return res.status(200).json(formattedMatches);
+    } catch (error) {
+        console.error("Error fetching transplantation scheduled matches:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+exports.updateTransplantationResult = async (req, res) => {
+    const { matchId } = req.params;
+    const { status } = req.body;
+
+    console.log("Updating transplantation result for matchId:", matchId, "with status:", status);
+
+    try {
+        // Update the status in MatchedOrgans
+        const match = await MatchedOrgans.findByIdAndUpdate(
+            matchId,
+            { status: status === "success" ? "transplantationsuccess" : "transplantationfailed" },
+            { new: true, runValidators: true }
+        );
+
+        if (!match) {
+            return res.status(404).json({ message: "Match not found" });
+        }
+
+        console.log("Match status updated:", match);
+
+        // Update the status in Request to 'completed'
+        const requestUpdate = await Request.findOneAndUpdate(
+            { receipientid: match.receipientid, organ: match.organ },
+            { requested_status: "completed" },
+            { new: true, runValidators: true }
+        );
+
+        if (!requestUpdate) {
+            return res.status(404).json({ message: "Request not found" });
+        }
+
+        console.log("Request status updated to 'completed':", requestUpdate);
+
+        // Update the status in Donation to 'completed'
+        const donationUpdate = await Donation.findOneAndUpdate(
+            { donorid: match.donorid, organ: match.organ },
+            { donation_status: "completed" },
+            { new: true, runValidators: true }
+        );
+
+        if (!donationUpdate) {
+            return res.status(404).json({ message: "Donation not found" });
+        }
+
+        console.log("Donation status updated to 'completed':", donationUpdate);
+
+        // Find the hospital email
+        const hospital = await User.findById(match.hospitalid);
+        if (!hospital) {
+            return res.status(404).json({ message: "Hospital not found" });
+        }
+
+        console.log("Hospital found:", hospital);
+
+        // Find the donor email
+        const donor = await User.findById(match.donorid);
+        if (!donor) {
+            return res.status(404).json({ message: "Donor not found" });
+        }
+
+        console.log("Donor found:", donor);
+
+        // Find the recipient email
+        const recipient = await User.findById(match.receipientid);
+        if (!recipient) {
+            return res.status(404).json({ message: "Recipient not found" });
+        }
+
+        console.log("Recipient found:", recipient);
+
+        // Configure Nodemailer
+        let transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: "organbank2025@gmail.com", // Replace with your Gmail
+                pass: "vhsb vvss vlyz fooj"  // Use an App Password instead of your actual password
+            }
+        });
+
+        // Email content based on the status
+        const emailSubject = status === "failure" ? "Transplantation Result: Failure" : "Transplantation Result: Success";
+        const emailBodyDonor = status === "failure"
+            ? `Dear ${donor.name},\n\nUnfortunately, the transplantation for your donated organ (${match.organ}) has failed. Please contact the hospital for further details.\n\nBest regards,\nOrgan Bank`
+            : `Dear ${donor.name},\n\nThe transplantation for your donated organ (${match.organ}) has been successful. Thank you for your generous donation.\n\nBest regards,\nOrgan Bank`;
+
+        const emailBodyRecipient = status === "failure"
+            ? `Dear ${recipient.name},\n\nUnfortunately, the transplantation for the organ (${match.organ}) you received has failed. Please contact the hospital for further details.\n\nBest regards,\nOrgan Bank`
+            : `Dear ${recipient.name},\n\nThe transplantation for the organ (${match.organ}) you received has been successful. Please contact the hospital for further details.\n\nBest regards,\nOrgan Bank`;
+
+        // Send email to the donor
+        let donorMailOptions = {
+            from: "organbank2025@gmail.com",
+            to: donor.email,
+            replyTo: hospital.email,
+            subject: emailSubject,
+            text: emailBodyDonor
+        };
+
+        transporter.sendMail(donorMailOptions, (error, info) => {
+            if (error) {
+                console.error("Error sending email to donor:", error);
+            } else {
+                console.log("Email sent to donor:", info.response);
+            }
+        });
+
+        // Send email to the recipient
+        let recipientMailOptions = {
+            from: "organbank2025@gmail.com",
+            to: recipient.email,
+            replyTo: hospital.email,
+            subject: emailSubject,
+            text: emailBodyRecipient
+        };
+
+        transporter.sendMail(recipientMailOptions, (error, info) => {
+            if (error) {
+                console.error("Error sending email to recipient:", error);
+            } else {
+                console.log("Email sent to recipient:", info.response);
+            }
+        });
+
+        return res.status(200).json({
+            message: "Transplantation result updated successfully and emails sent to donor and recipient",
+            match,
+            request: requestUpdate,
+            donation: donationUpdate
+        });
+    } catch (error) {
+        console.error("Error updating transplantation result:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};

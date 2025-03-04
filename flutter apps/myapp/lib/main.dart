@@ -7,6 +7,9 @@ import 'package:myapp/donor/donor_dashboard.dart';
 import 'package:myapp/feedback.dart';
 import 'package:myapp/hospital/hospital_dashboard.dart';
 import 'package:myapp/hospital/schedule_test.dart';
+import 'package:myapp/hospital/schedule_transplantation.dart';
+import 'package:myapp/hospital/update_testresult.dart';
+import 'package:myapp/hospital/update_transplantationresult.dart';
 import 'package:myapp/login.dart';
 import 'package:myapp/admin/admin_dashboard.dart';
 import 'package:myapp/admin/view_matches.dart';
@@ -68,6 +71,12 @@ class MyApp extends StatelessWidget {
         '/viewRequestStatus': (context) => ViewRequestStatusPage(
             receiverId: ModalRoute.of(context)!.settings.arguments as String),
         '/testSchedule': (context) => ScheduleTestPage(
+            hospitalId: ModalRoute.of(context)!.settings.arguments as String),
+        '/testResultUpdate': (context) => UpdateTestResultPage(
+            hospitalId: ModalRoute.of(context)!.settings.arguments as String), 
+        '/transplantationSchedule': (context) => ScheduleTransplantationPage(
+            hospitalId: ModalRoute.of(context)!.settings.arguments as String), 
+        '/transplantationResultUpdate': (context) => UpdateTransplantationResultPage(
             hospitalId: ModalRoute.of(context)!.settings.arguments as String),
         // ...other routes...
       },

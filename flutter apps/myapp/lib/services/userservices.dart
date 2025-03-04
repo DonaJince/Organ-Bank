@@ -289,4 +289,90 @@ Future<List<Map<String, dynamic>>> getApprovedMatches(String hospitalId) async {
       throw Exception('Failed to send test schedule email');
     }
   }
+
+  
+  Future<List<Map<String, dynamic>>> getTestScheduledMatches(String hospitalId) async {
+    try {
+      final response = await dio.get("${baseUrl}testScheduledMatches/$hospitalId");
+      print("Test scheduled matches response: ${response.data}");
+      if (response.statusCode == 200 && response.data is List) {
+        return List<Map<String, dynamic>>.from(response.data);
+      } else {
+        throw Exception('Failed to load test scheduled matches');
+      }
+    } catch (e) {
+      print("Error fetching test scheduled matches: $e");
+      throw Exception('Failed to fetch test scheduled matches');
+    }
+  }
+
+  Future<Response> updateTestResult(String matchId, String testResult) async {
+    try {
+      final response = await dio.put(
+        "${baseUrl}updateTestResult/$matchId",
+        data: {"status": testResult},
+      );
+      return response;
+    } catch (e) {
+      print("Error updating test result: $e");
+      throw Exception('Failed to update test result');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getSuccessMatches(String hospitalId) async {
+    try {
+      final response = await dio.get("${baseUrl}successMatches/$hospitalId");
+      print("Success matches response: ${response.data}");
+      if (response.statusCode == 200 && response.data is List) {
+        return List<Map<String, dynamic>>.from(response.data);
+      } else {
+        throw Exception('Failed to load success matches');
+      }
+    } catch (e) {
+      print("Error fetching success matches: $e");
+      throw Exception('Failed to fetch success matches');
+    }
+  }
+
+  Future<Response> scheduleTransplantation(String matchId, String emailBody) async {
+    try {
+      final response = await dio.post(
+        "${baseUrl}sendTransplantationScheduleEmail",
+        data: {"matchId": matchId, "emailBody": emailBody},
+      );
+      return response;
+    } catch (e) {
+      print("Error sending transplantation schedule email: $e");
+      throw Exception('Failed to send transplantation schedule email');
+    }
+  }
+
+Future<List<Map<String, dynamic>>> getTransplantationScheduledMatches(String hospitalId) async {
+    try {
+      final response = await dio.get("${baseUrl}transplantationScheduledMatches/$hospitalId");
+      print("Transplantation scheduled matches response: ${response.data}");
+      if (response.statusCode == 200 && response.data is List) {
+        return List<Map<String, dynamic>>.from(response.data);
+      } else {
+        throw Exception('Failed to load transplantation scheduled matches');
+      }
+    } catch (e) {
+      print("Error fetching transplantation scheduled matches: $e");
+      throw Exception('Failed to fetch transplantation scheduled matches');
+    }
+  }
+
+  Future<Response> updateTransplantationResult(String matchId, String transplantationResult) async {
+    try {
+      final response = await dio.put(
+        "${baseUrl}updateTransplantationResult/$matchId",
+        data: {"status": transplantationResult},
+      );
+      return response;
+    } catch (e) {
+      print("Error updating transplantation result: $e");
+      throw Exception('Failed to update transplantation result');
+    }
+  }
+  
 }

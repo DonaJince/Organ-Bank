@@ -55,6 +55,11 @@ class HospitalDashboardPage extends StatelessWidget {
                     icon: Icons.update,
                     color: Colors.purple,
                     onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/testResultUpdate',
+                        arguments: userId, // Pass the user ID
+                      );
                       // Navigate to Update Compatibility Test Result screen
                     },
                   ),
@@ -63,7 +68,12 @@ class HospitalDashboardPage extends StatelessWidget {
                     icon: Icons.calendar_today,
                     color: Colors.green,
                     onTap: () {
-                      // Navigate to Schedule Transplantation screen
+                      Navigator.pushNamed(
+                        context,
+                        '/transplantationSchedule',
+                        arguments: userId, // Pass the user ID
+                      );
+                 // Navigate to Schedule Transplantation screen
                     },
                   ),
                   DashboardCard(
@@ -71,6 +81,11 @@ class HospitalDashboardPage extends StatelessWidget {
                     icon: Icons.update,
                     color: const Color.fromARGB(255, 5, 23, 222),
                     onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/transplantationResultUpdate',
+                        arguments: userId, // Pass the user ID
+                      );
                       // Navigate to Update Transplantation Result screen
                     },
                   ),

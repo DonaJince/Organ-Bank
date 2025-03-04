@@ -42,4 +42,10 @@ router.put("/updateDonationStatus/:donationId", userController.updateDonationSta
 router.post("/approveMatch", userController.approveMatch);
 router.get("/approvedMatches/:hospitalId", userController.approvedMatches);
 router.post("/sendTestScheduleEmail", userController.sendTestScheduleEmail);
+router.get("/testScheduledMatches/:hospitalId", userController.testScheduledMatches);
+router.put("/updateTestResult/:matchId", userController.updateTestResult);
+router.get("/successMatches/:hospitalId", userController.successMatches);
+router.post("/sendTransplantationScheduleEmail", userController.sendTransplantationScheduleEmail);
+router.get("/transplantationScheduledMatches/:hospitalId", userController.transplantationScheduledMatches);
+router.put("/updateTransplantationResult/:matchId", userController.updateTransplantationResult);
 module.exports = router;
