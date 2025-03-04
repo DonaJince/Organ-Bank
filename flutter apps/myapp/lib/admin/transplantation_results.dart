@@ -77,6 +77,8 @@ class _TransplantationResultsPageState extends State<TransplantationResultsPage>
                             style: TextStyle(fontSize: 16, color: Colors.black87)),
                         Text("Name: ${result["donorid"]["name"]}",
                             style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Name: ${result["donorid"]["email"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
                         SizedBox(height: 6),
                         Text(
                           "Recipient Details",
@@ -91,6 +93,8 @@ class _TransplantationResultsPageState extends State<TransplantationResultsPage>
                             style: TextStyle(fontSize: 16, color: Colors.black87)),
                         Text("Name: ${result["receipientid"]["name"]}",
                             style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Name: ${result["receipientid"]["email"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
                         SizedBox(height: 6),
                         Text(
                           "Hospital Details",
@@ -104,6 +108,8 @@ class _TransplantationResultsPageState extends State<TransplantationResultsPage>
                         Text("ID: ${result["hospitalid"]["_id"]}",
                             style: TextStyle(fontSize: 16, color: Colors.black87)),
                         Text("Name: ${result["hospitalid"]["name"]}",
+                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        Text("Name: ${result["hospitalid"]["email"]}",
                             style: TextStyle(fontSize: 16, color: Colors.black87)),
                         SizedBox(height: 6),
                         Text(
