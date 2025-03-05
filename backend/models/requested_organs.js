@@ -20,5 +20,9 @@ var requestedorgansSchema = new mongoose.Schema({
         required: true,
         default: "pending"
     },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 })
 module.exports = mongoose.model("requested_organs",requestedorgansSchema);

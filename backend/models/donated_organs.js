@@ -20,5 +20,10 @@ var donatedorgansSchema = new mongoose.Schema({
         required: true,
         default: "pending"
     },
+
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 })
 module.exports = mongoose.model("donated_organs",donatedorgansSchema);

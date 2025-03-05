@@ -1641,3 +1641,42 @@ exports.getTransplantations = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
+
+exports.getTodayTransplantationData = async (req, res) => {
+    try {
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        const transplantations = await Transplantation.find({
+            createdAt: { $gte: today, $lt: tomorrow }
+        })
+            .populate({ path: 'donorid', model: 'User', select: 'name email' })
+            .populate({ path: 'receipientid', model: 'User', select: 'name email' })
+            .populate({ path: 'hospitalid', model: 'User', select: 'name email' })
+            .lean();
+
+        const formattedTransplantations = transplantations.map(transplantation => ({
+            ...transplantation,
+            _id: transplantation._id.toString(),
+            donorName: transplantation.donorid?.name || "N/A",
+            donorEmail: transplantation.donorid?.email || "N/A",
+            receipientName: transplantation.receipientid?.name || "N/A",
+            receipientEmail: transplantation.receipientid?.email || "N/A",
+            hospitalName: transplantation.hospitalid?.name || "N/A",
+            hospitalEmail: transplantation.hospitalid?.email || "N/A"
+        }));
+
+        console.log("Today's transplantations:", formattedTransplantations);
+
+        return res.status(200).json({
+            transplantations: formattedTransplantations
+        });
+    } catch (error) {
+        console.error("Error fetching  transplantation data:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};

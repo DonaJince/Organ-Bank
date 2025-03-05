@@ -49,4 +49,5 @@ router.post("/sendTransplantationScheduleEmail", userController.sendTransplantat
 router.get("/transplantationScheduledMatches/:hospitalId", userController.transplantationScheduledMatches);
 router.put("/updateTransplantationResult/:matchId", userController.updateTransplantationResult);
 router.get("/getTransplantations", userController.getTransplantations);
+router.get("/getTodayTransplantationData", userController.getTodayTransplantationData);
 module.exports = router;

@@ -107,8 +107,8 @@ class AdminServices {
 
   approveMatch(matchId) async {
     try {
-      final response = await dio.post("${baseUrl}approveMatch",
-          data: {"matchid": matchId});
+      final response =
+          await dio.post("${baseUrl}approveMatch", data: {"matchid": matchId});
       print("Approve match response: ${response.data}"); // Debugging
       return response.data; // Ensure it returns the JSON data correctly
     } catch (e) {
@@ -117,7 +117,7 @@ class AdminServices {
     }
   }
 
-  getTransplantations()async{
+  getTransplantations() async {
     try {
       final response = await dio.get("${baseUrl}getTransplantations");
       print("Transplantations response: ${response.data}"); // Debugging
@@ -127,4 +127,26 @@ class AdminServices {
       return {'success': false, 'message': 'Failed to fetch transplantations'};
     }
   }
+
+Future<List<Map<String, dynamic>>> getTodayTransplantationData() async {
+  try {
+    final response = await dio.get("${baseUrl}getTodayTransplantationData");
+
+    if (response.statusCode == 200) {
+      final data = response.data;
+      
+      if (data is Map<String, dynamic> && data.containsKey("transplantations")) {
+        return List<Map<String, dynamic>>.from(data["transplantations"]);
+      } else {
+        throw Exception("Unexpected response format");
+      }
+    } else {
+      throw Exception("Failed to fetch data: ${response.statusMessage}");
+    }
+  } catch (e) {
+    print("Error fetching transplantation data: $e");
+    return [];
+  }
+}
+
 }
