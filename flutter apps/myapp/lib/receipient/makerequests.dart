@@ -36,60 +36,117 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
     _fetchRequestedOrgans();
   }
 
+
   Future<void> _fetchApprovedHospitals() async {
     try {
       final response = await userServices.getApprovedHospitals();
       if (response['success']) {
         setState(() {
           hospitalMap = {
-            for (var hospital in response['data']) hospital['name']: hospital['_id']
+            for (var hospital in response['data'])
+              hospital['name']: hospital['_id']
           };
         });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Failed to load hospitals: ${response['message']}')),
+        );
       }
     } catch (e) {
-      _showSnackBar('Error fetching hospitals: $e');
+      print("Error fetching hospitals: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 
   Future<void> _fetchBloodType() async {
     try {
+      print("Fetching blood type for user ID: ${widget.id}");
       final response = await userServices.getBloodType(widget.id);
+      print("Blood type response: $response");
+
       if (response != null && response.containsKey('bloodtype')) {
         setState(() {
           bloodType = response['bloodtype'];
         });
+        print("Blood type fetched successfully: $bloodType");
+      } else {
+        print("Failed to fetch blood type: Invalid response format");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load blood type')),
+        );
       }
     } catch (e) {
-      _showSnackBar('Error fetching blood type: $e');
+      print("Error fetching blood type: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 
   Future<void> _fetchRequestedOrgans() async {
     try {
+      print("Fetching requested organs for user ID: ${widget.id}");
       final response = await userServices.getRequestedOrgans(widget.id);
+      print("Requested organs response: $response");
+
       setState(() {
         requestedOrgans = response;
         availableOrgans = organs.where((organ) => !requestedOrgans.contains(organ)).toList();
       });
+      print("Requested organs fetched successfully: $requestedOrgans");
+      print("Available organs: $availableOrgans");
     } catch (e) {
-      _showSnackBar('Error: $e');
+      print("Error fetching requested organs: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+  Future<void> fetchMatchedDonor(String receipientId, String hospitalId, String bloodType, String organ) async {
+    try {
+      print("Posting matched donor request for Recipient ID: $receipientId");
+      final response = await userServices.fetchMatchedDonor(receipientId, hospitalId, bloodType, organ);
+      print("Matched donor request response: $response");
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 
   Future<void> _submitRequest() async {
     if (selectedOrgan != null && selectedHospitalId != null) {
       try {
-        final response = await userServices.submitRequest(widget.id, [selectedOrgan!], selectedHospitalId!);
+        print(
+            "Submitting Request - ID: ${widget.id}, Organ: $selectedOrgan, Hospital ID: $selectedHospitalId");
+        final response = await userServices.submitRequest(
+            widget.id, [selectedOrgan!], selectedHospitalId!);
+
         if (response.statusCode == 200) {
-          _showSnackBar('Request submitted successfully.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Request submitted successfully.')),
+          );
+          fetchMatchedDonor(widget.id, selectedHospitalId!, bloodType!, selectedOrgan!);
         } else {
-          _showSnackBar('Failed to submit request.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to submit request.')),
+          );
         }
       } catch (e) {
-        _showSnackBar('Error: $e');
+        print("Error submitting request: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
       }
     } else {
-      _showSnackBar('Please select an organ and a hospital.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select an organ and a hospital.')),
+      );
     }
   }
 
