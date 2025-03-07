@@ -53,16 +53,14 @@ class LoginPage extends StatelessWidget {
           '/receiverDashboard',
           arguments: response.data['user']['_id'], // Pass the user ID
         );
-      }else if (response.data['user']['status'] == "approved" &&
+      } else if (response.data['user']['status'] == "approved" &&
           response.data['user']['usertype'] == "Hospital") {
         Navigator.pushNamed(
           context,
           '/hospitalDashboard',
           arguments: response.data['user']['_id'], // Pass the user ID
         );
-      }
-      
-       else {
+      } else {
         print('Invalid user');
       }
     } catch (e) {
@@ -75,9 +73,17 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
+        backgroundColor: Colors.red[200],
       ),
       body: SingleChildScrollView(
-        child: Padding(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.pink[100]!, Colors.red[200]!],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
           padding: const EdgeInsets.all(16.0),
           child: Center(
             child: Column(
@@ -86,9 +92,16 @@ class LoginPage extends StatelessWidget {
                 Text(
                   'Welcome Back!',
                   style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.teal),
+                      color: Colors.red[900],
+                      shadows: [
+                        Shadow(
+                          blurRadius: 10.0,
+                          color: Colors.black45,
+                          offset: Offset(2.0, 2.0),
+                        ),
+                      ]),
                 ),
                 SizedBox(height: 20),
                 TextField(
@@ -97,6 +110,8 @@ class LoginPage extends StatelessWidget {
                     border: OutlineInputBorder(),
                     labelText: 'Username',
                     hintText: 'Enter your username',
+                    filled: true,
+                    fillColor: Colors.white70,
                   ),
                 ),
                 SizedBox(height: 20),
@@ -107,6 +122,8 @@ class LoginPage extends StatelessWidget {
                     border: OutlineInputBorder(),
                     labelText: 'Password',
                     hintText: 'Enter your password',
+                    filled: true,
+                    fillColor: Colors.white70,
                   ),
                 ),
                 SizedBox(height: 20),
@@ -120,9 +137,12 @@ class LoginPage extends StatelessWidget {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: Colors.red[900],
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     textStyle: TextStyle(fontSize: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   child: Text('Login'),
                 ),
@@ -137,7 +157,7 @@ class LoginPage extends StatelessWidget {
                   },
                   child: Text(
                     'New User? Sign Up',
-                    style: TextStyle(color: Colors.teal, fontSize: 16),
+                    style: TextStyle(color: Colors.red[900], fontSize: 16),
                   ),
                 ),
               ],

@@ -20,7 +20,6 @@ class _GetDonorDetailsState extends State<GetDonorDetails> {
     _fetchDonorDetails();
   }
 
-  /// Fetch Donor Details API Call
   Future<void> _fetchDonorDetails() async {
     try {
       print("Fetching details for donor ID: ${widget.id}");
@@ -38,7 +37,6 @@ class _GetDonorDetailsState extends State<GetDonorDetails> {
     }
   }
 
-  /// Approve Donor API Call
   Future<void> _approveDonor() async {
     try {
       final response = await adminServices.approveDonor(widget.id);
@@ -55,7 +53,6 @@ class _GetDonorDetailsState extends State<GetDonorDetails> {
     }
   }
 
-  /// Reject Donor API Call
   Future<void> _rejectDonor() async {
     try {
       final response = await adminServices.rejectDonor(widget.id);
@@ -65,14 +62,13 @@ class _GetDonorDetailsState extends State<GetDonorDetails> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Donor Rejected Successfully")));
-            await _sendRegistrationRejectionEmail(donorDetails?['email']);
+        await _sendRegistrationRejectionEmail(donorDetails?['email']);
       }
     } catch (e) {
       print("Error rejecting donor: $e");
     }
   }
 
-  /// Send Approval Email
   Future<void> _sendRegistrationApprovalEmail(String? email) async {
     try {
       final response = await adminServices.sendRegistrationApprovalEmail(email);
@@ -86,7 +82,6 @@ class _GetDonorDetailsState extends State<GetDonorDetails> {
     }
   }
 
-   /// Send Rejection Email
   Future<void> _sendRegistrationRejectionEmail(String? email) async {
     try {
       final response = await adminServices.sendRegistrationRejectionEmail(email);
@@ -105,63 +100,80 @@ class _GetDonorDetailsState extends State<GetDonorDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Donor Details'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.red[200],
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : donorDetails == null
-              ? Center(child: Text('Failed to load donor details'))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Name: ${donorDetails?['name'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Text('Email: ${donorDetails?['email'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Text('Phone: ${donorDetails?['phone'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Text('Created At: ${donorDetails?['createdAt'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Text('Status: ${donorDetails?['status'] ?? 'Pending'}',
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pink[100]!, Colors.red[200]!],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : donorDetails == null
+                ? Center(
+                    child: Text(
+                      'Failed to load donor details',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  )
+                : Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 5,
+                    color: Colors.white.withOpacity(0.9),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ElevatedButton(
-                            onPressed: _approveDonor,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 15),
-                            ),
-                            child: Text('Approve',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white)),
-                          ),
-                          ElevatedButton(
-                            onPressed: _rejectDonor,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 15),
-                            ),
-                            child: Text('Reject',
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.white)),
+                          Text('Name: ${donorDetails?['name'] ?? 'N/A'}',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          SizedBox(height: 10),
+                          Text('Email: ${donorDetails?['email'] ?? 'N/A'}',
+                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                          SizedBox(height: 10),
+                          Text('Phone: ${donorDetails?['phone'] ?? 'N/A'}',
+                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                          SizedBox(height:10),
+                          Text('Created At: ${donorDetails?['createdAt'] ?? 'N/A'}',
+                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                          SizedBox(height: 10),
+                          Text('Status: ${donorDetails?['status'] ?? 'Pending'}',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red[400])),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                onPressed: donorDetails?['status'] == 'Approved' ? null : _approveDonor,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                ),
+                                child: Text('Approve',
+                                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                              ),
+                              ElevatedButton(
+                                onPressed: donorDetails?['status'] == 'Rejected' ? null : _rejectDonor,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                ),
+                                child: Text('Reject',
+                                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+      ),
     );
   }
 }

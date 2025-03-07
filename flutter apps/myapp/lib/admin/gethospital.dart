@@ -20,12 +20,10 @@ class _GetHospitalDetailsState extends State<GetHospitalDetails> {
     _fetchHospitalDetails();
   }
 
-  /// Fetch Hospital Details API Call
   Future<void> _fetchHospitalDetails() async {
     try {
       print("Fetching details for hospital ID: ${widget.id}");
       final response = await adminServices.getHospitalDetailsById(widget.id);
-
       setState(() {
         isLoading = false;
         hospitalDetails = response.data;
@@ -39,7 +37,6 @@ class _GetHospitalDetailsState extends State<GetHospitalDetails> {
     }
   }
 
-  /// Approve Hospital API Call
   Future<void> _approveHospital() async {
     try {
       final response = await adminServices.approveHospital(widget.id);
@@ -56,7 +53,6 @@ class _GetHospitalDetailsState extends State<GetHospitalDetails> {
     }
   }
 
-  /// Reject Hospital API Call
   Future<void> _rejectHospital() async {
     try {
       final response = await adminServices.rejectHospital(widget.id);
@@ -73,7 +69,6 @@ class _GetHospitalDetailsState extends State<GetHospitalDetails> {
     }
   }
 
-  /// Send Approval Email
   Future<void> _sendRegistrationApprovalEmail(String? email) async {
     try {
       final response = await adminServices.sendRegistrationApprovalEmail(email);
@@ -87,7 +82,6 @@ class _GetHospitalDetailsState extends State<GetHospitalDetails> {
     }
   }
 
-  /// Send Rejection Email
   Future<void> _sendRegistrationRejectionEmail(String? email) async {
     try {
       final response = await adminServices.sendRegistrationRejectionEmail(email);
@@ -106,64 +100,86 @@ class _GetHospitalDetailsState extends State<GetHospitalDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Hospital Details'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.red[200],
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : hospitalDetails == null
-              ? Center(child: Text('Failed to load hospital details'))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Name: ${hospitalDetails?['userid']['name'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Text('Email: ${hospitalDetails?['userid']['email'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Text('Phone: ${hospitalDetails?['userid']['phone'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Text('Alternate Phone: ${hospitalDetails?['otherphno'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Text('Location: ${hospitalDetails?['location'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Text('Created At: ${hospitalDetails?['userid']['createdAt'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 10),
-                      Text('Status: ${hospitalDetails?['userid']['status'] ?? 'Pending'}',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pink[100]!, Colors.red[200]!],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : hospitalDetails == null
+                ? Center(
+                    child: Text(
+                      'Failed to load hospital details',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  )
+                : Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 5,
+                    color: Colors.white.withOpacity(0.9),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ElevatedButton(
-                            onPressed: _approveHospital,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                            ),
-                            child: Text('Approve',
-                                style: TextStyle(fontSize: 18, color: Colors.white)),
-                          ),
-                          ElevatedButton(
-                            onPressed: _rejectHospital,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                            ),
-                            child: Text('Reject',
-                                style: TextStyle(fontSize: 18, color: Colors.white)),
+                          Text('Name: ${hospitalDetails?['userid']['name'] ?? 'N/A'}',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          SizedBox(height: 10),
+                          Text('Email: ${hospitalDetails?['userid']['email'] ?? 'N/A'}',
+                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                          SizedBox(height: 10),
+                          Text('Phone: ${hospitalDetails?['userid']['phone'] ?? 'N/A'}',
+                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                          SizedBox(height: 10),
+                          Text('Alternate Phone: ${hospitalDetails?['otherphno'] ?? 'N/A'}',
+                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                          SizedBox(height: 10),
+                          Text('Location: ${hospitalDetails?['location'] ?? 'N/A'}',
+                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                          SizedBox(height: 10),
+                          Text('Created At: ${hospitalDetails?['userid']['createdAt'] ?? 'N/A'}',
+                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                          SizedBox(height: 10),
+                          Text('Status: ${hospitalDetails?['userid']['status'] ?? 'Pending'}',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red[400])),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton(
+                                onPressed: hospitalDetails?['userid']['status'] == 'Approved' ? null : _approveHospital,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                ),
+                                child: Text('Approve',
+                                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                              ),
+                              ElevatedButton(
+                                onPressed: hospitalDetails?['userid']['status'] == 'Rejected' ? null : _rejectHospital,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                ),
+                                child: Text('Reject',
+                                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+      ),
     );
   }
 }

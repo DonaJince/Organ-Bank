@@ -3,173 +3,114 @@ import 'package:flutter/material.dart';
 class HospitalDashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Retrieve the user ID passed from the login page
     final String userId = ModalRoute.of(context)!.settings.arguments as String;
-    final String email = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Hospital Dashboard'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.red[200],
       ),
-      body: Padding(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pink[100]!, Colors.red[200]!],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: [
-                  DashboardCard(
-                    title: 'Update Profile',
-                    icon: Icons.person,
-                    color: Colors.blue,
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/updateHospitalProfile',
-                        arguments: userId, // Pass the user ID
-                      );
-                    },
-                  ),
-                  DashboardCard(
-                    title: 'Schedule Compatibility Test',
-                    icon: Icons.schedule,
-                    color: Colors.orange,
-                    onTap: () {
-
-                      Navigator.pushNamed(
-                        context,
-                        '/testSchedule',
-                        arguments: userId, // Pass the user ID
-                      );
-                      // Navigate to Schedule Compatibility Test screen
-                    },
-                  ),
-                  DashboardCard(
-                    title: 'Update Compatibility Test Result',
-                    icon: Icons.update,
-                    color: Colors.purple,
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/testResultUpdate',
-                        arguments: userId, // Pass the user ID
-                      );
-                      // Navigate to Update Compatibility Test Result screen
-                    },
-                  ),
-                  DashboardCard(
-                    title: 'Schedule Transplantation',
-                    icon: Icons.calendar_today,
-                    color: Colors.green,
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/transplantationSchedule',
-                        arguments: userId, // Pass the user ID
-                      );
-                 // Navigate to Schedule Transplantation screen
-                    },
-                  ),
-                  DashboardCard(
-                    title: 'Update Transplantation Result',
-                    icon: Icons.update,
-                    color: const Color.fromARGB(255, 5, 23, 222),
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/transplantationResultUpdate',
-                        arguments: userId, // Pass the user ID
-                      );
-                      // Navigate to Update Transplantation Result screen
-                    },
-                  ),
-                  DashboardCard(
-                    title: 'Feedback',
-                    icon: Icons.feedback,
-                    color: Colors.teal,
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/submitFeedback',
-                        arguments: userId, // Pass the user ID
-                      );
-                    },
-                  ),
-                  DashboardCard(
-                    title: 'Complaint',
-                    icon: Icons.report_problem,
-                    color: const Color.fromARGB(255, 255, 68, 0),
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/submitComplaint',
-                        arguments: userId, // Pass the user ID
-                      );
-                    },
-                  ),
-                ],
+        child: SingleChildScrollView(
+          child: ListView(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            children: <Widget>[
+              DashboardButton(
+                text: 'Update Profile',
+                icon: Icons.person,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/updateHospitalProfile', arguments: userId);
+                },
               ),
-            ),
-          ],
+              SizedBox(height: 20),
+              DashboardButton(
+                text: 'Schedule Compatibility Test',
+                icon: Icons.schedule,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/testSchedule', arguments: userId);
+                },
+              ),
+              SizedBox(height: 20),
+              DashboardButton(
+                text: 'Update Compatibility Test Result',
+                icon: Icons.update,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/testResultUpdate', arguments: userId);
+                },
+              ),
+              SizedBox(height: 20),
+              DashboardButton(
+                text: 'Schedule Transplantation',
+                icon: Icons.calendar_today,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/transplantationSchedule', arguments: userId);
+                },
+              ),
+              SizedBox(height: 20),
+              DashboardButton(
+                text: 'Update Transplantation Result',
+                icon: Icons.update,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/transplantationResultUpdate', arguments: userId);
+                },
+              ),
+              SizedBox(height: 20),
+              DashboardButton(
+                text: 'Feedback',
+                icon: Icons.feedback,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/submitFeedback', arguments: userId);
+                },
+              ),
+              SizedBox(height: 20),
+              DashboardButton(
+                text: 'Complaint',
+                icon: Icons.report_problem,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/submitComplaint', arguments: userId);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class DashboardCard extends StatelessWidget {
-  final String title;
+class DashboardButton extends StatelessWidget {
+  final String text;
   final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
+  final VoidCallback onPressed;
 
-  DashboardCard(
-      {required this.title,
-      required this.icon,
-      required this.color,
-      required this.onTap});
+  const DashboardButton({required this.text, required this.icon, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        elevation: 4,
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 28, color: Colors.white),
+      label: Text(
+        text,
+        style: TextStyle(fontSize: 20, color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red[400],
+        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 50, color: color),
-                SizedBox(height: 10),
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 18, color: color),
-                ),
-              ],
-            ),
-          ),
-        ),
+        elevation: 5,
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: HospitalDashboardPage(),
-  ));
 }

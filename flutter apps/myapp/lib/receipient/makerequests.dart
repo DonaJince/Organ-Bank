@@ -32,8 +32,8 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
   void initState() {
     super.initState();
     _fetchApprovedHospitals();
-    _fetchBloodType(); // Fetch blood type on initialization
-    _fetchRequestedOrgans(); // Fetch requested organs on initialization
+    _fetchBloodType();
+    _fetchRequestedOrgans();
   }
 
   Future<void> _fetchApprovedHospitals() async {
@@ -42,140 +42,106 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
       if (response['success']) {
         setState(() {
           hospitalMap = {
-            for (var hospital in response['data'])
-              hospital['name']: hospital['_id']
+            for (var hospital in response['data']) hospital['name']: hospital['_id']
           };
         });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text('Failed to load hospitals: ${response['message']}')),
-        );
       }
     } catch (e) {
-      print("Error fetching hospitals: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      _showSnackBar('Error fetching hospitals: $e');
     }
   }
 
   Future<void> _fetchBloodType() async {
     try {
-      print("Fetching blood type for user ID: ${widget.id}");
       final response = await userServices.getBloodType(widget.id);
-      print("Blood type response: $response");
-
       if (response != null && response.containsKey('bloodtype')) {
         setState(() {
           bloodType = response['bloodtype'];
         });
-        print("Blood type fetched successfully: $bloodType");
-      } else {
-        print("Failed to fetch blood type: Invalid response format");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load blood type')),
-        );
       }
     } catch (e) {
-      print("Error fetching blood type: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      _showSnackBar('Error fetching blood type: $e');
     }
   }
 
   Future<void> _fetchRequestedOrgans() async {
     try {
-      print("Fetching requested organs for user ID: ${widget.id}");
       final response = await userServices.getRequestedOrgans(widget.id);
-      print("Requested organs response: $response");
-
       setState(() {
         requestedOrgans = response;
         availableOrgans = organs.where((organ) => !requestedOrgans.contains(organ)).toList();
       });
-      print("Requested organs fetched successfully: $requestedOrgans");
-      print("Available organs: $availableOrgans");
     } catch (e) {
-      print("Error fetching requested organs: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
-  }
-
-  Future<void> fetchMatchedDonor(String receipientId, String hospitalId, String bloodType, String organ) async {
-    try {
-      print("Posting matched donor request for Recipient ID: $receipientId");
-      final response = await userServices.fetchMatchedDonor(receipientId, hospitalId, bloodType, organ);
-      print("Matched donor request response: $response");
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      _showSnackBar('Error: $e');
     }
   }
 
   Future<void> _submitRequest() async {
     if (selectedOrgan != null && selectedHospitalId != null) {
       try {
-        print(
-            "Submitting Request - ID: ${widget.id}, Organ: $selectedOrgan, Hospital ID: $selectedHospitalId");
-        final response = await userServices.submitRequest(
-            widget.id, [selectedOrgan!], selectedHospitalId!);
-
+        final response = await userServices.submitRequest(widget.id, [selectedOrgan!], selectedHospitalId!);
         if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Request submitted successfully.')),
-          );
-          fetchMatchedDonor(widget.id, selectedHospitalId!, bloodType!, selectedOrgan!);
+          _showSnackBar('Request submitted successfully.');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to submit request.')),
-          );
+          _showSnackBar('Failed to submit request.');
         }
       } catch (e) {
-        print("Error submitting request: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        _showSnackBar('Error: $e');
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select an organ and a hospital.')),
-      );
+      _showSnackBar('Please select an organ and a hospital.');
     }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Make a Request'),
+        title: Text('Request an Organ', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.pinkAccent,
       ),
-      body: Padding(
+      body: Container(
         padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pink.shade100, Colors.redAccent.shade200],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
               'Select an Organ to Request:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
             ),
+            SizedBox(height: 10),
             Expanded(
               child: ListView(
                 children: availableOrgans.map((String organ) {
-                  return RadioListTile<String>(
-                    title: Text(organ),
-                    value: organ,
-                    groupValue: selectedOrgan,
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedOrgan = value;
-                      });
-                    },
+                  return Card(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: RadioListTile<String>(
+                      title: Text(organ, style: TextStyle(color: Colors.black)),
+                      value: organ,
+                      groupValue: selectedOrgan,
+                      activeColor: Colors.pinkAccent,
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedOrgan = value;
+                        });
+                      },
+                    ),
                   );
                 }).toList(),
               ),
@@ -183,9 +149,16 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
             SizedBox(height: 10),
             Text(
               'Select Hospital:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
             ),
-            DropdownButton<String>(
+            SizedBox(height: 10),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              dropdownColor: Colors.white,
               value: selectedHospital,
               onChanged: (String? newValue) {
                 setState(() {
@@ -193,18 +166,26 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
                   selectedHospitalId = hospitalMap[newValue];
                 });
               },
-              items: hospitalMap.keys
-                  .map<DropdownMenuItem<String>>((String hospital) {
+              items: hospitalMap.keys.map<DropdownMenuItem<String>>((String hospital) {
                 return DropdownMenuItem<String>(
                   value: hospital,
-                  child: Text(hospital),
+                  child: Text(hospital, style: TextStyle(color: Colors.black)),
                 );
               }).toList(),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submitRequest,
-              child: Text('Submit Request'),
+            Center(
+              child: ElevatedButton(
+                onPressed: _submitRequest,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pinkAccent,
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: Text('Submit Request', style: TextStyle(fontSize: 18, color: Colors.white)),
+              ),
             ),
           ],
         ),

@@ -6,9 +6,16 @@ class AdminDashboardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Admin Dashboard'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.red[200],
       ),
-      body: Padding(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pink[100]!, Colors.red[200]!],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: ListView(
@@ -103,11 +110,12 @@ class DashboardButton extends StatelessWidget {
         style: TextStyle(fontSize: 20, color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.red[400],
         padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
+        elevation: 5,
       ),
     );
   }

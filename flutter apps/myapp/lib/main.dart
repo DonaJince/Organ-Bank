@@ -21,10 +21,9 @@ import 'package:myapp/receipient/makerequests.dart';
 import 'package:myapp/receipient/receiver_dashboard.dart';
 import 'package:myapp/receipient/view_requeststatus.dart';
 import 'package:myapp/update_hospitalprofile.dart';
-import 'package:myapp/update_userprofile.dart'; // Add this import
-import 'package:myapp/donor/makedonations.dart'; 
-import 'package:myapp/donor/view_donationstatus.dart'; // Add this import
-// ...other imports..
+import 'package:myapp/update_userprofile.dart';
+import 'package:myapp/donor/makedonations.dart';
+import 'package:myapp/donor/view_donationstatus.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,7 +35,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My App',
       theme: ThemeData(
-        primarySwatch: Colors.teal,
+       scaffoldBackgroundColor: Colors.red[200],
       ),
       initialRoute: '/',
       routes: {
@@ -73,17 +72,15 @@ class MyApp extends StatelessWidget {
         '/testSchedule': (context) => ScheduleTestPage(
             hospitalId: ModalRoute.of(context)!.settings.arguments as String),
         '/testResultUpdate': (context) => UpdateTestResultPage(
-            hospitalId: ModalRoute.of(context)!.settings.arguments as String), 
+            hospitalId: ModalRoute.of(context)!.settings.arguments as String),
         '/transplantationSchedule': (context) => ScheduleTransplantationPage(
-            hospitalId: ModalRoute.of(context)!.settings.arguments as String), 
+            hospitalId: ModalRoute.of(context)!.settings.arguments as String),
         '/transplantationResultUpdate': (context) => UpdateTransplantationResultPage(
             hospitalId: ModalRoute.of(context)!.settings.arguments as String),
-        // ...other routes...
       },
     );
   }
 }
-
 
 class HomePage extends StatelessWidget {
   @override
@@ -91,7 +88,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Organ Bank'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.red[400],
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -105,7 +102,7 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
-                    color: Colors.teal),
+                    color: const Color.fromARGB(255, 82, 0, 0)),
               ),
               SizedBox(height: 10),
               Text(
@@ -134,14 +131,14 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.info, color: Colors.teal, size: 30),
+                      Icon(Icons.info, color: const Color.fromARGB(255, 255, 0, 0), size: 30),
                       SizedBox(height: 10),
                       Text(
                         'About the Program',
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.teal),
+                            color: const Color.fromARGB(255, 102, 0, 0)),
                       ),
                       SizedBox(height: 10),
                       Text(
@@ -165,14 +162,14 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.settings, color: Colors.teal, size: 30),
+                      Icon(Icons.settings, color: const Color.fromARGB(255, 255, 0, 0), size: 30),
                       SizedBox(height: 10),
                       Text(
                         'What the System Does',
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.teal),
+                            color: const Color.fromARGB(255, 101, 0, 0)),
                       ),
                       SizedBox(height: 10),
                       _buildFeatureItem(
@@ -198,7 +195,7 @@ class HomePage extends StatelessWidget {
                     Navigator.pushNamed(context, '/login');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: const Color.fromARGB(255, 99, 0, 0),
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                     textStyle:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -206,7 +203,9 @@ class HomePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text('Get Started'),
+                  child: Text('Get Started',
+                      style: TextStyle(color: Colors.white)),
+
                 ),
               ),
             ],
@@ -222,7 +221,7 @@ class HomePage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
-          Icon(Icons.check_circle, color: Colors.green),
+          Icon(Icons.check_circle, color: Colors.pink),
           SizedBox(width: 10),
           Expanded(
             child: Text(text,

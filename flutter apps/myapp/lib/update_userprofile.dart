@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:myapp/services/userservices.dart';
 
@@ -27,123 +26,155 @@ class _UpdateUserProfilePageState extends State<UpdateUserProfilePage> {
     fetchUserDetails();
   }
 
-Future<void> fetchUserDetails() async {
-  try {
-    final response = await userServices.getUserDetailsById(widget.id);
-
-    print("Response Data: ${response.data}"); // Debugging
-
-    userDetails = response.data;
-
-    print("Name Type: ${userDetails?["name"].runtimeType}");
-    print("Email Type: ${userDetails?["email"].runtimeType}");
-    print("Phone Type: ${userDetails?["phone"].runtimeType}");
-
-    _nameController.text = userDetails?["name"]?.toString() ?? "";
-    _emailController.text = userDetails?["email"]?.toString() ?? "";
-    _phoneController.text = userDetails?["phone"]?.toString() ?? "";  // Convert phone to String
-
-    setState(() {
-      isLoading = false;
-    });
-
-  } catch (e) {
-    print("Error fetching user details: $e");
-    setState(() {
-      isLoading = false;
-    });
-  }
-}
-
-
-
-Future<void> _updateProfile() async {
-  if (_formKey.currentState?.validate() ?? false) {
+  Future<void> fetchUserDetails() async {
     try {
-      final response = await userServices.updateUserProfile(
-        widget.id,
-        _nameController.text,
-        _phoneController.text,
-      );
+      final response = await userServices.getUserDetailsById(widget.id);
 
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Profile Updated Successfully")),
-        );
-      } else {
-        var errorMessage = jsonDecode(response.data)["message"] ?? "Update failed";
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: $errorMessage")),
-        );
-      }
+      print("Response Data: ${response.data}"); // Debugging
+
+      userDetails = response.data;
+
+      print("Name Type: ${userDetails?["name"].runtimeType}");
+      print("Email Type: ${userDetails?["email"].runtimeType}");
+      print("Phone Type: ${userDetails?["phone"].runtimeType}");
+
+      _nameController.text = userDetails?["name"]?.toString() ?? "";
+      _emailController.text = userDetails?["email"]?.toString() ?? "";
+      _phoneController.text = userDetails?["phone"]?.toString() ?? "";  // Convert phone to String
+
+      setState(() {
+        isLoading = false;
+      });
+
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Network Error: $e")),
-      );
+      print("Error fetching user details: $e");
+      setState(() {
+        isLoading = false;
+      });
     }
   }
-}
 
+  Future<void> _updateProfile() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      try {
+        final response = await userServices.updateUserProfile(
+          widget.id,
+          _nameController.text,
+          _phoneController.text,
+        );
+
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Profile Updated Successfully")),
+          );
+        } else {
+          var errorMessage = jsonDecode(response.data)["message"] ?? "Update failed";
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error: $errorMessage")),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Network Error: $e")),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Update Profile'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.red[200],
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : userDetails == null
-              ? Center(child: Text('Failed to load details'))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          controller: _nameController,
-                          decoration: InputDecoration(labelText: 'Name'),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your name';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(labelText: 'Email'),
-                          readOnly: true,
-                        ),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          controller: _phoneController,
-                          decoration: InputDecoration(labelText: 'Phone'),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your phone number';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: _updateProfile,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                            textStyle: TextStyle(fontSize: 18, color: Colors.white),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pink.shade100, Colors.red.shade200],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : userDetails == null
+                ? Center(child: Text('Failed to load details'))
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              labelText: 'Name',
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your name';
+                              }
+                              return null;
+                            },
                           ),
-                          child: Text('Update Profile'),
-                        ),
-                      ],
+                          SizedBox(height: 10),
+                          TextFormField(
+                            controller: _emailController,
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            readOnly: true,
+                          ),
+                          SizedBox(height: 10),
+                          TextFormField(
+                            controller: _phoneController,
+                            decoration: InputDecoration(
+                              labelText: 'Phone',
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your phone number';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 20),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: _updateProfile,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red[200],
+                                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                textStyle: TextStyle(fontSize: 18, color: Colors.white),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text('Update Profile'),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+      ),
     );
   }
 }

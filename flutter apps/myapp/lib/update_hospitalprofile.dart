@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:myapp/services/userservices.dart';
 
@@ -8,14 +7,13 @@ class UpdateHospitalProfilePage extends StatefulWidget {
   const UpdateHospitalProfilePage({super.key, required this.id});
 
   @override
-  State<UpdateHospitalProfilePage> createState() =>
-      _UpdateHospitalProfilePageState();
+  State<UpdateHospitalProfilePage> createState() => _UpdateHospitalProfilePageState();
 }
 
 class _UpdateHospitalProfilePageState extends State<UpdateHospitalProfilePage> {
   UserServices userServices = UserServices();
   final _formKey = GlobalKey<FormState>();
-  Map<String, dynamic>? userDetails;
+  Map<String, dynamic>? hospitalDetails;
   bool isLoading = true;
 
   final TextEditingController _nameController = TextEditingController();
@@ -27,33 +25,28 @@ class _UpdateHospitalProfilePageState extends State<UpdateHospitalProfilePage> {
   @override
   void initState() {
     super.initState();
-    fetchUserDetails();
+    fetchHospitalDetails();
   }
 
-  Future<void> fetchUserDetails() async {
+  Future<void> fetchHospitalDetails() async {
     try {
       final response = await userServices.getHospitalDetailsByid(widget.id);
 
       print("Response Data: ${response.data}"); // Debugging
 
-      userDetails = response.data;
+      hospitalDetails = response.data;
 
-      print("Name Type: ${userDetails?["name"].runtimeType}");
-      print("Email Type: ${userDetails?["email"].runtimeType}");
-      print("Phone Type: ${userDetails?["phone"].runtimeType}");
-
-      _nameController.text = userDetails?["name"]?.toString() ?? "";
-      _emailController.text = userDetails?["email"]?.toString() ?? "";
-      _phoneController.text =
-          userDetails?["phone"]?.toString() ?? ""; // Convert phone to String
-      _locationController.text = userDetails?["location"]?.toString() ?? "";
-      _otherPhoneController.text = userDetails?["otherphno"]?.toString() ?? "";
+      _nameController.text = hospitalDetails?["name"]?.toString() ?? "";
+      _emailController.text = hospitalDetails?["email"]?.toString() ?? "";
+      _phoneController.text = hospitalDetails?["phone"]?.toString() ?? "";
+      _locationController.text = hospitalDetails?["location"]?.toString() ?? "";
+      _otherPhoneController.text = hospitalDetails?["otherphno"]?.toString() ?? "";
 
       setState(() {
         isLoading = false;
       });
     } catch (e) {
-      print("Error fetching user details: $e");
+      print("Error fetching hospital details: $e");
       setState(() {
         isLoading = false;
       });
@@ -76,8 +69,7 @@ class _UpdateHospitalProfilePageState extends State<UpdateHospitalProfilePage> {
             SnackBar(content: Text("Profile Updated Successfully")),
           );
         } else {
-          var errorMessage =
-              jsonDecode(response.data)["message"] ?? "Update failed";
+          var errorMessage = jsonDecode(response.data)["message"] ?? "Update failed";
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Error: $errorMessage")),
           );
@@ -94,85 +86,132 @@ class _UpdateHospitalProfilePageState extends State<UpdateHospitalProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Profile'),
-        backgroundColor: Colors.teal,
+        title: Text('Update Hospital Profile'),
+        backgroundColor: Colors.red[200],
       ),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : userDetails == null
-              ? Center(child: Text('Failed to load details'))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          controller: _nameController,
-                          decoration: InputDecoration(labelText: 'Name'),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your name';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: InputDecoration(labelText: 'Email'),
-                          readOnly: true,
-                        ),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          controller: _phoneController,
-                          decoration: InputDecoration(labelText: 'Phone'),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your phone number';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          controller: _locationController,
-                          decoration: InputDecoration(labelText: 'Location'),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your location';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        TextFormField(
-                          controller: _otherPhoneController,
-                          decoration: InputDecoration(labelText: 'Other Phone'),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your other phone number';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: _updateProfile,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 15),
-                            textStyle:
-                                TextStyle(fontSize: 18, color: Colors.white),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pink.shade100, Colors.red.shade200],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : hospitalDetails == null
+                ? Center(child: Text('Failed to load details'))
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              labelText: 'Name',
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter the hospital name';
+                              }
+                              return null;
+                            },
                           ),
-                          child: Text('Update Profile'),
-                        ),
-                      ],
+                          SizedBox(height: 10),
+                          TextFormField(
+                            controller: _emailController,
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            readOnly: true,
+                          ),
+                          SizedBox(height: 10),
+                          TextFormField(
+                            controller: _phoneController,
+                            decoration: InputDecoration(
+                              labelText: 'Phone',
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter the phone number';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 10),
+                          TextFormField(
+                            controller: _locationController,
+                            decoration: InputDecoration(
+                              labelText: 'Location',
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter the location';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 10),
+                          TextFormField(
+                            controller: _otherPhoneController,
+                            decoration: InputDecoration(
+                              labelText: 'Other Phone',
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter the other phone number';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 20),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: _updateProfile,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red[200],
+                                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                textStyle: TextStyle(fontSize: 18, color: Colors.white),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text('Update Profile'),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+      ),
     );
   }
 }

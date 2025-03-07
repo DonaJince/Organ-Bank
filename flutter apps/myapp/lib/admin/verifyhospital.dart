@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/admin/gethospital.dart';
 import 'package:myapp/services/adminservices.dart';
+import 'package:myapp/admin/gethospital.dart';
 
 class VerifyHospitalPage extends StatefulWidget {
   const VerifyHospitalPage({super.key});
@@ -16,7 +16,6 @@ class _VerifyHospitalPageState extends State<VerifyHospitalPage> {
   Future<void> getHospitalDetails() async {
     try {
       var response = await adminServices.getHospitalDetails();
-      print(response);
       setState(() {
         hospitalDetails = response.data;
       });
@@ -35,36 +34,69 @@ class _VerifyHospitalPageState extends State<VerifyHospitalPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Verify Hospitals'),
+        title: Text('Verify Donors'),
+        backgroundColor: Colors.red[200],
       ),
-      body: hospitalDetails.isEmpty
-          ? Center(child: Text('No pending hospitals.'))
-          : Column(
-              children: <Widget>[
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: hospitalDetails.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(hospitalDetails[index]['name']),
-                        subtitle: Text(hospitalDetails[index]['email']),
-                        trailing: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => GetHospitalDetails(
-                                        id: hospitalDetails[index]["_id"],
-                                      )),
-                            );
-                          },
-                          child: Text('Verify'),
-                        ),
-                      );
-                    },
-                  ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pink[100]!, Colors.red[200]!],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: hospitalDetails.isEmpty
+            ? Center(
+                child: Text(
+                  'No pending hospitals.',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-              ],
-            ),
+              )
+            : ListView.builder(
+                itemCount: hospitalDetails.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 5,
+                    color: Colors.white.withOpacity(0.9),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      title: Text(
+                        hospitalDetails[index]['name'],
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        hospitalDetails[index]['email'],
+                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                      ),
+                      trailing: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => GetHospitalDetails(
+                                      id: hospitalDetails[index]["_id"],
+                                    )),
+                          );
+                        },
+                        icon: Icon(Icons.verified, color: Colors.white),
+                        label: Text('Verify', style: TextStyle(color: Colors.white)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red[400],
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 5,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+      ),
     );
   }
 }

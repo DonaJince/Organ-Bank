@@ -5,18 +5,17 @@ class DonorDashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String userId = ModalRoute.of(context)!.settings.arguments as String;
-    final String email = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Donor Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.red[200],
         centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.teal.shade900, Colors.teal.shade400],
+            colors: [Colors.pink.shade100, Colors.red.shade200],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -26,7 +25,23 @@ class DonorDashboardPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            
+              Text(
+                'Welcome, Donor!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 107, 0, 0),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Manage your donations and profile here.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(252, 90, 0, 0),
+                ),
+              ),
+              SizedBox(height: 20),
               Expanded(
                 child: ListView(
                   children: [
@@ -98,14 +113,14 @@ class DonorDashboardPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.teal.shade900, size: 20),
+            Icon(icon, color: Colors.red.shade900, size: 20),
             SizedBox(width: 10),
             Text(
               title,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.teal.shade900,
+                color: Colors.red.shade900,
               ),
             ),
           ],

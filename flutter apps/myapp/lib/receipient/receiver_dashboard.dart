@@ -10,13 +10,13 @@ class ReceiverDashboardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Receiver Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.red[200],
         centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.teal.shade900, Colors.teal.shade400],
+            colors: [Colors.pink.shade100, Colors.red.shade200],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -26,7 +26,23 @@ class ReceiverDashboardPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
+              Text(
+                'Welcome, Receiver!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 116, 0, 0),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Manage your requests and profile here.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(179, 82, 0, 0),
+                ),
+              ),
+              SizedBox(height: 20),
               Expanded(
                 child: ListView(
                   children: [
@@ -98,14 +114,14 @@ class ReceiverDashboardPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.teal.shade900, size: 20),
+            Icon(icon, color: Colors.red.shade900, size: 20),
             SizedBox(width: 10),
             Text(
               title,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.teal.shade900,
+                color: Colors.red.shade900,
               ),
             ),
           ],
