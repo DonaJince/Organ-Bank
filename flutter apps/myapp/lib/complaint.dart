@@ -7,7 +7,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ComplaintForm(userId: 'example@example.com'), // Provide the email parameter
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+      ),
+      home: ComplaintForm(userId: 'example@example.com'),
     );
   }
 }
@@ -25,57 +28,97 @@ class _ComplaintFormState extends State<ComplaintForm> {
   UserServices userServices = UserServices();
 
   Future<void> _submitComplaint() async {
-  final String complaint = _controller.text;
-  if (complaint.isNotEmpty) {
-    try {
-      final response = await userServices.submitComplaint(widget.userId, complaint);
-      
-      // ✅ Check for "status": "success"
-      if (response['status'] == 'success') { 
+    final String complaint = _controller.text;
+    if (complaint.isNotEmpty) {
+      try {
+        final response = await userServices.submitComplaint(widget.userId, complaint);
+        
+        if (response['status'] == 'success') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Complaint submitted successfully.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          _controller.clear();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response['message'] ?? 'Failed to submit complaint.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        print(e);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Complaint submitted successfully.')),
-        );
-        _controller.clear();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['message'] ?? 'Failed to submit complaint.')),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
         );
       }
-    } catch (e) {
-      print(e);
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(
+          content: Text('Please enter your complaint.'),
+          backgroundColor: Colors.orange,
+        ),
       );
     }
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Please enter your complaint.')),
-    );
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text('Complaint Form'),
+        title: Text('Complaint Form', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.redAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Enter your complaint',
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Enter Your Complaint',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 10),
+                    TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                        hintText: 'Write your complaint here...',
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      maxLines: 5,
+                    ),
+                  ],
+                ),
               ),
-              maxLines: 5,
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submitComplaint,
-              child: Text('Submit'),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _submitComplaint,
+                child: Text('Submit', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
             ),
           ],
         ),

@@ -63,22 +63,31 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Schedule Transplantation'),
+        title: Text(
+          'Schedule Transplantation',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.pinkAccent,
       ),
       body: successMatches.isEmpty
-          ? Center(child: Text('There are no matches for scheduling transplantation.'))
+          ? Center(
+              child: Text(
+                'There are no matches for scheduling transplantation.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            )
           : ListView.builder(
               itemCount: successMatches.length,
               itemBuilder: (context, index) {
                 final match = successMatches[index];
                 return Card(
-                  margin: EdgeInsets.all(8.0),
+                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   elevation: 5,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(12.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -87,71 +96,49 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.teal,
+                            color: Colors.pinkAccent,
                           ),
                         ),
                         SizedBox(height: 6),
-                        Text(
-                          "Donor Details",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Divider(),
-                        Text("ID: ${match["donorid"]["_id"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Name: ${match["donorName"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Email: ${match["donorEmail"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        _buildSectionTitle("Donor Details"),
+                        _buildInfoText("ID: ${match["donorid"]["_id"]}"),
+                        _buildInfoText("Name: ${match["donorName"]}"),
+                        _buildInfoText("Email: ${match["donorEmail"]}"),
                         SizedBox(height: 6),
-                        Text(
-                          "Recipient Details",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Divider(),
-                        Text("ID: ${match["receipientid"]["_id"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Name: ${match["receipientName"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Email: ${match["receipientEmail"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        SizedBox(height: 6),
-                        Text(
-                          "Hospital Details",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Divider(),
-                        Text("ID: ${match["hospitalid"]["_id"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Name: ${match["hospitalName"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Email: ${match["hospitalEmail"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        SizedBox(height: 6),
+                        _buildSectionTitle("Recipient Details"),
+                        _buildInfoText("ID: ${match["receipientid"]["_id"]}"),
+                        _buildInfoText("Name: ${match["receipientName"]}"),
+                        _buildInfoText("Email: ${match["receipientEmail"]}"),
+                        SizedBox(height: 10),
                         TextField(
                           controller: emailControllers[match['_id']],
                           decoration: InputDecoration(
-                            labelText: 'Email Body',
+                            labelText: 'Date And Time',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           maxLines: 3,
                         ),
-                        SizedBox(height: 8.0),
-                        ElevatedButton(
-                          onPressed: () {
-                            _scheduleTransplantation(match['_id']);
-                          },
-                          child: Text('Schedule Transplantation'),
+                        SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _scheduleTransplantation(match['_id']);
+                            },
+                            child: Text(
+                              'Schedule Transplantation',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.pinkAccent,
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -159,6 +146,27 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
                 );
               },
             ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 6),
+        Text(
+          title,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+        ),
+        Divider(color: Colors.pinkAccent),
+      ],
+    );
+  }
+
+  Widget _buildInfoText(String text) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: 16, color: Colors.black87),
     );
   }
 

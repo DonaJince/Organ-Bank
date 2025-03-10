@@ -58,10 +58,11 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Test Result'),
+        title: Text('Update Test Result', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        backgroundColor: Colors.pinkAccent,
       ),
       body: testScheduledMatches.isEmpty
-          ? Center(child: Text('There are no test results to update.'))
+          ? Center(child: Text('There are no test results to update.', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pinkAccent)))
           : ListView.builder(
               itemCount: testScheduledMatches.length,
               itemBuilder: (context, index) {
@@ -72,6 +73,7 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
+                  color: Colors.pink[50],
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
@@ -82,57 +84,19 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.teal,
+                            color: Colors.redAccent,
                           ),
                         ),
                         SizedBox(height: 6),
-                        Text(
-                          "Donor Details",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Divider(),
-                        Text("ID: ${match["donorid"]["_id"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Name: ${match["donorName"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Email: ${match["donorEmail"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        _buildSectionTitle("Donor Details"),
+                        _buildInfoText("ID: ${match["donorid"]["_id"]}"),
+                        _buildInfoText("Name: ${match["donorName"]}"),
+                        _buildInfoText("Email: ${match["donorEmail"]}"),
                         SizedBox(height: 6),
-                        Text(
-                          "Recipient Details",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Divider(),
-                        Text("ID: ${match["receipientid"]["_id"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Name: ${match["receipientName"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Email: ${match["receipientEmail"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        SizedBox(height: 6),
-                        Text(
-                          "Hospital Details",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Divider(),
-                        Text("ID: ${match["hospitalid"]["_id"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Name: ${match["hospitalName"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Email: ${match["hospitalEmail"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        _buildSectionTitle("Recipient Details"),
+                        _buildInfoText("ID: ${match["receipientid"]["_id"]}"),
+                        _buildInfoText("Name: ${match["receipientName"]}"),
+                        _buildInfoText("Email: ${match["receipientEmail"]}"),
                         SizedBox(height: 8.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -144,6 +108,7 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
                               child: Text('Success'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
                               ),
                             ),
                             ElevatedButton(
@@ -153,6 +118,7 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
                               child: Text('Failure'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
                               ),
                             ),
                           ],
@@ -163,6 +129,30 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
                 );
               },
             ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.pinkAccent,
+          ),
+        ),
+        Divider(color: Colors.pinkAccent),
+      ],
+    );
+  }
+
+  Widget _buildInfoText(String text) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: 16, color: Colors.black87),
     );
   }
 }

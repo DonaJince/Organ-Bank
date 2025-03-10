@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:intl/intl.dart';
 import 'package:myapp/services/adminservices.dart';
 
 class GenerateReportsPage extends StatefulWidget {
+  const GenerateReportsPage({super.key});
+
   @override
   _GenerateReportsPageState createState() => _GenerateReportsPageState();
 }
@@ -35,43 +38,90 @@ class _GenerateReportsPageState extends State<GenerateReportsPage> {
 
   Future<void> _generatePdf() async {
     final pdf = pw.Document();
+    final String formattedDate = DateFormat('dd MMM yyyy').format(DateTime.now());
 
     pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text('Transplantation Report', style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold, color: PdfColors.teal)),
-              pw.SizedBox(height: 20),
-              ...transplantationData.asMap().entries.map<pw.Widget>((entry) {
-                int index = entry.key + 1;
-                Map<String, dynamic> data = entry.value;
-                return pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text('Transplantation #$index', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, decoration: pw.TextDecoration.underline)),
-                    pw.SizedBox(height: 10),
-                    pw.Text('ID: ${data["_id"]}', style: pw.TextStyle(fontSize: 16, color: PdfColors.blue)),
-                    pw.Text('Donor Name: ${data["donorName"]}', style: pw.TextStyle(fontSize: 16)),
-                    pw.Text('Donor Email: ${data["donorEmail"]}', style: pw.TextStyle(fontSize: 16)),
-                    pw.Text('Recipient Name: ${data["receipientName"]}', style: pw.TextStyle(fontSize: 16)),
-                    pw.Text('Recipient Email: ${data["receipientEmail"]}', style: pw.TextStyle(fontSize: 16)),
-                    pw.Text('Hospital Name: ${data["hospitalName"]}', style: pw.TextStyle(fontSize: 16)),
-                    pw.Text('Hospital Email: ${data["hospitalEmail"]}', style: pw.TextStyle(fontSize: 16)),
-                    pw.Text('Organ: ${data["organ"]}', style: pw.TextStyle(fontSize: 16)),
-                    pw.Text('Status: ${data["status"] == "transplantationsuccess" ? "Success" : "Failure"}', style: pw.TextStyle(fontSize: 16, color: data["status"] == "transplantationsuccess" ? PdfColors.green : PdfColors.red)),
-                    pw.SizedBox(height: 20),
-                  ],
-                );
-              }).toList(),
-            ],
-          );
-        },
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) => [
+          _buildHeader(formattedDate),
+          pw.SizedBox(height: 15),
+          _buildTable(),
+          pw.SizedBox(height: 15),
+          _buildFooter(),
+        ],
       ),
     );
 
     await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+  }
+
+  /// Header Section
+  pw.Widget _buildHeader(String date) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          'Transplantation Report',
+          style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold, color: PdfColors.black),
+        ),
+        pw.SizedBox(height: 5),
+        pw.Text(
+          'Date: $date',
+          style: pw.TextStyle(fontSize: 14, color: PdfColors.grey700),
+        ),
+        pw.SizedBox(height: 10),
+        pw.Divider(thickness: 1, color: PdfColors.grey),
+      ],
+    );
+  }
+
+  /// Table for Report Data
+  pw.Widget _buildTable() {
+    return pw.Table.fromTextArray(
+      border: pw.TableBorder.all(color: PdfColors.grey),
+      headers: ['No', 'Organ', 'Donor', 'Receipient', 'Hospital', 'Status'],
+      data: transplantationData.asMap().entries.map((entry) {
+        final int index = entry.key + 1;
+        final Map<String, dynamic> data = entry.value;
+
+        return [
+          index.toString(),
+          data["organ"] ?? 'N/A',
+          '${data["donorName"] ?? "N/A"}\n(${data["donorEmail"] ?? "N/A"})',
+          '${data["receipientName"] ?? "N/A"}\n(${data["receipientEmail"] ?? "N/A"})',
+          '${data["hospitalName"] ?? "N/A"}\n(${data["hospitalEmail"] ?? "N/A"})',
+          data["status"] == "transplantationsuccess"
+              ? pw.Text('Success', style: pw.TextStyle(color: PdfColors.green, fontWeight: pw.FontWeight.bold))
+              : pw.Text('Failure', style: pw.TextStyle(color: PdfColors.red, fontWeight: pw.FontWeight.bold)),
+        ];
+      }).toList(),
+      headerStyle: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+      headerDecoration: pw.BoxDecoration(color: PdfColors.blueGrey800),
+      cellHeight: 40,
+      cellAlignments: {
+        0: pw.Alignment.center,
+        1: pw.Alignment.center,
+        2: pw.Alignment.centerLeft,
+        3: pw.Alignment.centerLeft,
+        4: pw.Alignment.centerLeft,
+        5: pw.Alignment.center,
+      },
+    );
+  }
+
+  /// Footer Section
+  pw.Widget _buildFooter() {
+    return pw.Column(
+      children: [
+        pw.Divider(thickness: 1, color: PdfColors.grey),
+        pw.SizedBox(height: 5),
+        pw.Text(
+          'Generated by the Organ Bank',
+          style: pw.TextStyle(fontSize: 12, color: PdfColors.grey600),
+        ),
+      ],
+    );
   }
 
   @override
@@ -79,11 +129,22 @@ class _GenerateReportsPageState extends State<GenerateReportsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Generate Reports'),
+        backgroundColor: const Color.fromARGB(255, 120, 0, 38),
+        centerTitle: true,
       ),
       body: Center(
-        child: ElevatedButton(
+        child: ElevatedButton.icon(
           onPressed: _generatePdf,
-          child: Text('Download Report as PDF'),
+          icon: Icon(Icons.picture_as_pdf),
+          label: Text('Download Report as PDF',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)
+          ),
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            backgroundColor: const Color.fromARGB(255, 94, 0, 0),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );

@@ -11,30 +11,31 @@ class ViewRequestStatusPage extends StatefulWidget {
 }
 
 class _ViewRequestStatusPageState extends State<ViewRequestStatusPage> {
-  UserServices userServices = UserServices();
-  List<Map<String, dynamic>> requests = [];
+  final UserServices userServices = UserServices();
+  late Future<List<Map<String, dynamic>>> _requestsFuture;
 
   @override
   void initState() {
     super.initState();
-    _fetchRequests();
+    _requestsFuture = _fetchRequests();
   }
 
-  Future<void> _fetchRequests() async {
+  Future<List<Map<String, dynamic>>> _fetchRequests() async {
     try {
       final response = await userServices.getRequests(widget.receiverId);
       print("API Response: $response");
-
-      setState(() {
-        requests =
-            response != null ? List<Map<String, dynamic>>.from(response) : [];
-      });
+      return response != null ? List<Map<String, dynamic>>.from(response) : [];
     } catch (e) {
       print("Error fetching requests: $e");
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(
+          content: Text('Failed to fetch requests. Please try again.'),
+          backgroundColor: Colors.redAccent,
+        ),
       );
+
+      return [];
     }
   }
 
@@ -43,22 +44,94 @@ class _ViewRequestStatusPageState extends State<ViewRequestStatusPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Request Status'),
+        backgroundColor: Colors.pink.shade700, // Pinkish-Red Header
+        elevation: 0,
       ),
-      body: requests.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
+      body: Container(
+        color: Colors.pink.shade50, // Light Pink Background
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _requestsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator(color: Colors.pink));
+            } else if (snapshot.hasError) {
+              return _buildErrorUI();
+            }
+
+            final requests = snapshot.data ?? [];
+
+            if (requests.isEmpty) {
+              return _buildEmptyState();
+            }
+
+            return ListView.builder(
+              padding: EdgeInsets.all(12),
               itemCount: requests.length,
               itemBuilder: (context, index) {
                 final request = requests[index];
-                return Card(
-                  margin: EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text('Organ: ${request['organ']}'),
-                    subtitle: Text('Status: ${request['requested_status']}'),
-                  ),
-                );
+                return _buildRequestCard(request);
               },
-            ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /// 📌 UI for Empty State
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.info_outline, size: 50, color: Colors.pink.shade300),
+          SizedBox(height: 10),
+          Text(
+            'No requests found.',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.pink.shade500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 📌 UI for Error State
+  Widget _buildErrorUI() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 50, color: Colors.redAccent),
+          SizedBox(height: 10),
+          Text(
+            'Error loading requests.',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.redAccent),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 📌 Card UI for Requests
+  Widget _buildRequestCard(Map<String, dynamic> request) {
+    return Card(
+      margin: EdgeInsets.only(bottom: 10),
+      elevation: 5,
+      shadowColor: Colors.pink.shade200,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Colors.white, // White background for contrast
+      child: ListTile(
+        contentPadding: EdgeInsets.all(15),
+        title: Text(
+          'Organ: ${request['organ']}',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.pink.shade800),
+        ),
+        subtitle: Text(
+          'Status: ${request['requested_status']}',
+          style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+        ),
+        leading: Icon(Icons.favorite, color: Colors.pink.shade700),
+      ),
     );
   }
 }

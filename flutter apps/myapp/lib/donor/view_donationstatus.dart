@@ -30,7 +30,6 @@ class _ViewDonationStatusPageState extends State<ViewDonationStatusPage> {
       });
     } catch (e) {
       print("Error fetching donations: $e");
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -45,7 +44,7 @@ class _ViewDonationStatusPageState extends State<ViewDonationStatusPage> {
         setState(() {
           donations = donations.map((donation) {
             if (donation['_id'] == donationId) {
-              donation['availability_status'] = newStatus; // Update locally
+              donation['availability_status'] = newStatus;
             }
             return donation;
           }).toList();
@@ -67,40 +66,59 @@ class _ViewDonationStatusPageState extends State<ViewDonationStatusPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Donation Status'),
+        title: Text('Donation Status', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.pinkAccent,
       ),
       body: donations.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: Text(
+                'No donations made',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.redAccent),
+              ),
+            )
           : ListView.builder(
               itemCount: donations.length,
               itemBuilder: (context, index) {
                 final donation = donations[index];
                 return Card(
-                  margin: EdgeInsets.all(8.0),
+                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+                  elevation: 5,
+                  color: Colors.pink[50],
                   child: ListTile(
-                    title: Text('Organ: ${donation['organ']}'),
+                    contentPadding: EdgeInsets.all(16.0),
+                    title: Text(
+                      'Organ: ${donation['organ']}',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.redAccent),
+                    ),
                     subtitle: Text(
                       'Status: ${donation['availability_status'] == 'available' ? 'Available' : 'Not Available'}',
+                      style: TextStyle(fontSize: 16, color: Colors.pinkAccent),
                     ),
                     trailing: donation['donation_status'] != 'pending'
                         ? Text(
                             '${donation['donation_status']}',
-                            style: TextStyle(color: Colors.green),
+                            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
                           )
-                        : TextButton(
+                        : ElevatedButton(
                             onPressed: () {
                               String newStatus = donation['availability_status'] == 'available' ? 'not available' : 'available';
                               _toggleDonationStatus(donation['_id'], newStatus);
                             },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: donation['availability_status'] == 'available' ? Colors.redAccent : Colors.green,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                            ),
                             child: Text(
                               donation['availability_status'] == 'available' ? 'Set as Not Available' : 'Set as Available',
-                              style: TextStyle(color: donation['availability_status'] == 'available' ? Colors.red : Colors.green),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                   ),
                 );
               },
             ),
+      backgroundColor: Colors.white,
     );
   }
 }

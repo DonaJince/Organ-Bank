@@ -58,22 +58,31 @@ class _UpdateTransplantationResultPageState extends State<UpdateTransplantationR
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Transplantation Result'),
+        title: Text(
+          'Update Transplantation Result',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.pinkAccent,
       ),
       body: transplantScheduledMatches.isEmpty
-          ? Center(child: Text('There are no transplantation results to update.'))
+          ? Center(
+              child: Text(
+                'There are no transplantation results to update.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            )
           : ListView.builder(
               itemCount: transplantScheduledMatches.length,
               itemBuilder: (context, index) {
                 final match = transplantScheduledMatches[index];
                 return Card(
-                  margin: EdgeInsets.all(8.0),
+                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                   elevation: 5,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(12.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -82,58 +91,21 @@ class _UpdateTransplantationResultPageState extends State<UpdateTransplantationR
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.teal,
+                            color: Colors.pinkAccent,
                           ),
                         ),
                         SizedBox(height: 6),
-                        Text(
-                          "Donor Details",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Divider(),
-                        Text("ID: ${match["donorid"]["_id"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Name: ${match["donorName"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Email: ${match["donorEmail"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
+                        _buildSectionTitle("Donor Details"),
+                        _buildInfoText("ID: ${match["donorid"]["_id"]}"),
+                        _buildInfoText("Name: ${match["donorName"]}"),
+                        _buildInfoText("Email: ${match["donorEmail"]}"),
                         SizedBox(height: 6),
-                        Text(
-                          "Recipient Details",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Divider(),
-                        Text("ID: ${match["receipientid"]["_id"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Name: ${match["receipientName"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Email: ${match["receipientEmail"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        SizedBox(height: 6),
-                        Text(
-                          "Hospital Details",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Divider(),
-                        Text("ID: ${match["hospitalid"]["_id"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Name: ${match["hospitalName"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        Text("Email: ${match["hospitalEmail"]}",
-                            style: TextStyle(fontSize: 16, color: Colors.black87)),
-                        SizedBox(height: 8.0),
+                        _buildSectionTitle("Recipient Details"),
+                        _buildInfoText("ID: ${match["receipientid"]["_id"]}"),
+                        _buildInfoText("Name: ${match["receipientName"]}"),
+                        _buildInfoText("Email: ${match["receipientEmail"]}"),
+                  
+                        SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -141,18 +113,32 @@ class _UpdateTransplantationResultPageState extends State<UpdateTransplantationR
                               onPressed: () {
                                 _updateTransplantationResult(match['_id'], 'success');
                               },
-                              child: Text('Success'),
+                              child: Text(
+                                'Success',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
+                                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
                             ElevatedButton(
                               onPressed: () {
                                 _updateTransplantationResult(match['_id'], 'failure');
                               },
-                              child: Text('Failure'),
+                              child: Text(
+                                'Failure',
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
+                                backgroundColor: Colors.redAccent,
+                                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
                           ],
@@ -163,6 +149,27 @@ class _UpdateTransplantationResultPageState extends State<UpdateTransplantationR
                 );
               },
             ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 6),
+        Text(
+          title,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+        ),
+        Divider(color: Colors.pinkAccent),
+      ],
+    );
+  }
+
+  Widget _buildInfoText(String text) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: 16, color: Colors.black87),
     );
   }
 }

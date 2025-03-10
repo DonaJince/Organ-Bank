@@ -608,8 +608,12 @@ exports.fetchMatchedDonor = async (req, res) => {
         console.log("Matching donations found:", matchedDonations);
 
         if (!matchedDonations || matchedDonations.length === 0) {
-            return res.status(400).json({ message: "No matching donations found for the given blood type and organ" });
+            return res.status(200).json({ 
+                message: "No matching donations found for the given blood type and organ", 
+                matchedDonations: [] 
+            });
         }
+        
 
         // Store the matching details in MatchedOrgans collection
         const matchedOrganPromises = matchedDonations.map(donation => {
@@ -667,7 +671,8 @@ exports.fetchMatchedReceipient = async (req, res) => {
         console.log("Matching organ requests found:", matchedRequests);
 
         if (!matchedRequests || matchedRequests.length === 0) {
-            return res.status(400).json({ message: "No matching organ requests found for the given blood type" });
+            console.log("No matching organ requests found for the given blood type and organ.");
+            return res.status(200).json({ message: "No matching organ requests found", matchedOrgans: [] });
         }
 
         // Store the matching details in MatchedOrgans collection

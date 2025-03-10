@@ -88,7 +88,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Organ Bank'),
-        backgroundColor: Colors.red[400],
+        backgroundColor: const Color.fromARGB(255, 128, 2, 0),
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -131,7 +131,7 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.info, color: const Color.fromARGB(255, 255, 0, 0), size: 30),
+                      Icon(Icons.info, color: const Color.fromARGB(255, 110, 0, 0), size: 30),
                       SizedBox(height: 10),
                       Text(
                         'About the Program',
@@ -162,7 +162,7 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.settings, color: const Color.fromARGB(255, 255, 0, 0), size: 30),
+                      Icon(Icons.settings, color: const Color.fromARGB(255, 126, 0, 0), size: 30),
                       SizedBox(height: 10),
                       Text(
                         'What the System Does',
