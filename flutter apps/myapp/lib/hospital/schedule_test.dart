@@ -22,57 +22,71 @@ class _ScheduleTestPageState extends State<ScheduleTestPage> {
   }
 
   Future<void> _fetchApprovedMatches() async {
-    try {
-      final response = await userServices.getApprovedMatches(widget.hospitalId);
-      setState(() {
-        approvedMatches = response.map((match) {
-          return {
-            ...match,
-            '_id': match['_id']?.toString() ?? '',
-          };
-        }).toList();
+  try {
+    final response = await userServices.getApprovedMatches(widget.hospitalId);
+    if (!mounted) return;
 
-        emailControllers = {
-          for (var match in approvedMatches) match['_id']: TextEditingController()
-        };
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching matches: ${e.toString()}')),
-      );
-    }
+    List<Map<String, dynamic>> fetchedMatches = response.map((match) {
+      return {
+        ...match,
+        '_id': match['_id']?.toString() ?? '',
+      };
+    }).toList();
+
+    print("Approved Matches: $fetchedMatches"); // Debugging line
+
+    if (!mounted) return;
+
+    setState(() {
+      approvedMatches = fetchedMatches;
+      emailControllers = {
+        for (var match in approvedMatches) if (match['_id'].isNotEmpty) match['_id']: TextEditingController()
+      };
+    });
+  } catch (e) {
+    if (!mounted) return;
+    print("Error fetching matches: ${e.toString()}"); // Debugging line
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error fetching matches: ${e.toString()}')),
+    );
   }
+}
+
+
 
   Future<void> _sendTestScheduleEmail(String matchId) async {
-    final emailBody = emailControllers[matchId]?.text.trim() ?? '';
-    if (emailBody.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Email body cannot be empty.')),
-      );
-      return;
-    }
-
-    try {
-      final response = await userServices.sendTestScheduleEmail(matchId, emailBody);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.statusCode == 200 ? 'Email sent successfully.' : 'Failed to send email.'),
-          backgroundColor: response.statusCode == 200 ? Colors.green : Colors.red,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error sending email: ${e.toString()}')),
-      );
-    }
+  final emailBody = emailControllers[matchId]?.text.trim() ?? '';
+  if (emailBody.isEmpty) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Email body cannot be empty.')),
+    );
+    return;
   }
+
+  try {
+    final response = await userServices.sendTestScheduleEmail(matchId, emailBody);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(response.statusCode == 200 ? 'Email sent successfully.' : 'Failed to send email.'),
+        backgroundColor: response.statusCode == 200 ? Colors.green : Colors.red,
+      ),
+    );
+  } catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error sending email: ${e.toString()}')),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Schedule Test', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color.fromARGB(255, 144, 7, 87),
+        title: Text('Schedule Test', style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 87, 0, 20),
         elevation: 0,
       ),
       body: Container(
@@ -110,8 +124,9 @@ class _ScheduleTestPageState extends State<ScheduleTestPage> {
                                   fontWeight: FontWeight.bold,
                                   color: const Color.fromARGB(255, 149, 0, 77))),
                           SizedBox(height: 6),
-                          buildSection("Donor Details", match["donorid"], match["donorName"], match["donorEmail"]),
-                          buildSection("Recipient Details", match["receipientid"], match["receipientName"], match["receipientEmail"]),
+                          buildSection("Donor Details", match["donorid"]["_id"], match["donorid"]["name"], match["donorid"]["email"]),
+                          buildSection("Recipient Details", match["receipientid"]["_id"], match["receipientid"]["name"], match["receipientid"]["email"]),
+
       
                           SizedBox(height: 6),
                           TextField(
@@ -147,22 +162,23 @@ class _ScheduleTestPageState extends State<ScheduleTestPage> {
     );
   }
 
-  Widget buildSection(String title, dynamic id, String name, String email) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 6),
-        Text(
-          title,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
-        ),
-        Divider(color: Colors.grey.shade400),
-        Text("ID: ${id["_id"]}", style: TextStyle(fontSize: 16, color: Colors.black87)),
-        Text("Name: $name", style: TextStyle(fontSize: 16, color: Colors.black87)),
-        Text("Email: $email", style: TextStyle(fontSize: 16, color: Colors.black87)),
-      ],
-    );
-  }
+  Widget buildSection(String title, String id, String name, String email) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SizedBox(height: 6),
+      Text(
+        title,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+      ),
+      Divider(color: Colors.grey.shade400),
+      Text("ID: $id", style: TextStyle(fontSize: 16, color: Colors.black87)),
+      Text("Name: $name", style: TextStyle(fontSize: 16, color: Colors.black87)),
+      Text("Email: $email", style: TextStyle(fontSize: 16, color: Colors.black87)),
+    ],
+  );
+}
+
 
   @override
   void dispose() {

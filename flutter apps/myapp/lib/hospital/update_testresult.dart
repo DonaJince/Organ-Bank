@@ -21,48 +21,54 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
   }
 
   Future<void> _fetchTestScheduledMatches() async {
-    try {
-      final response = await userServices.getTestScheduledMatches(widget.hospitalId);
-      setState(() {
-        testScheduledMatches = response;
-      });
-    } catch (e) {
-      print("Error fetching test scheduled matches: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
+  try {
+    final response = await userServices.getTestScheduledMatches(widget.hospitalId);
+
+    if (!mounted) return; // Prevent updating UI if the widget is disposed
+
+    setState(() {
+      testScheduledMatches = response;
+    });
+  } catch (e) {
+    if (!mounted) return; // Prevent error if the widget is unmounted
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
   }
+}
+
 
   Future<void> _updateTestResult(String matchId, String testResult) async {
-    try {
-      final response = await userServices.updateTestResult(matchId, testResult);
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Test result updated successfully.')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update test result.')),
-        );
-      }
-    } catch (e) {
-      print("Error updating test result: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    }
+  try {
+    final response = await userServices.updateTestResult(matchId, testResult);
+
+    if (!mounted) return; // Prevent errors if the widget is unmounted
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(response.statusCode == 200 
+          ? 'Test result updated successfully.' 
+          : 'Failed to update test result.'),
+      ),
+    );
+  } catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Update Test Result', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-        backgroundColor: Colors.pinkAccent,
+        backgroundColor: const Color.fromARGB(255, 122, 0, 41),
       ),
       body: testScheduledMatches.isEmpty
-          ? Center(child: Text('There are no test results to update.', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pinkAccent)))
+          ? Center(child: Text('There are no test results to update.', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 0, 0, 0))))
           : ListView.builder(
               itemCount: testScheduledMatches.length,
               itemBuilder: (context, index) {
@@ -141,10 +147,10 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.pinkAccent,
+            color: const Color.fromARGB(255, 128, 0, 42),
           ),
         ),
-        Divider(color: Colors.pinkAccent),
+        Divider(color: const Color.fromARGB(255, 0, 0, 0)),
       ],
     );
   }
@@ -155,4 +161,11 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
       style: TextStyle(fontSize: 16, color: Colors.black87),
     );
   }
+@override
+void dispose() {
+  testScheduledMatches.clear();
+  super.dispose();
+}
+
+
 }

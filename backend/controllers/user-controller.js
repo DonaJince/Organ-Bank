@@ -6,6 +6,9 @@ const Donation = require("../models/donated_organs");
 const Request = require("../models/requested_organs");
 const MatchedOrgans = require("../models/matched_organs");
 const Transplantation = require("../models/transplantation");
+const Donor = require("../models/donor");
+const Receipient = require("../models/receipient");
+const Admin = require("../models/admin");
 const nodemailer = require("nodemailer");
 
 exports.sendRegistrationApprovalEmail = async (req, res) => {
@@ -30,7 +33,7 @@ exports.sendRegistrationApprovalEmail = async (req, res) => {
             from: "organbank2025@gmail.com",
             to: email,
             subject: "Registration Approval Notification",
-            text: "Congratulations! Your registration has been approved. Thank you for your contribution."
+            text: "Congratulations! Your registration has been approved. Your username will be your email and password will be the password you entered at the time of registration.Thank you for your contribution."
         };
 
         // Send Email
@@ -82,40 +85,72 @@ exports,this.sendRegistrationRejectionEmail = async (req, res) => {
 
 
 
-exports.registerUser = (req, res) => {
-    console.log(req.body);
-    User.findOne({ email: req.body.email }).then((user) => {
-        if (user) {
+
+exports.registerUser = async (req, res) => {
+    try {
+        console.log(req.body);
+        
+        // Check if email already exists
+        const existingUser = await User.findOne({ email: req.body.email });
+        if (existingUser) {
             return res.status(400).json({ message: "Email already exists" });
         }
-        User.findOne({ phone: req.body.phone }).then((withphone) => {
-            if (withphone) {
-                return res.status(400).json({ message: "Phone already exists" });
-            }
-            const newUser = User(req.body);
-            newUser.save().then((newuser) => {
-                if (newuser) {
-                    if (req.body.usertype == "Hospital") {
-                        req.body.userid = newuser._id;
-                        let newHospital = Hospital(req.body);
-                        newHospital.save().then((hospital) => {
-                            if (hospital) {
-                                return res.status(200).json({ message: "User and Hospital created successfully", newuser, hospital });
-                            } else {
-                                return res.status(400).json({ message: "Failed to create hospital" });
-                            }
-                        })
-                    } else {
-                        return res.status(200).json({ message: "User created successfully", newuser });
-                    }
-                } else {
-                    return res.status(400).json({ message: "Failed to create user" });
-                }
-            })
-        })
 
-    })
-}
+
+        // Create new User
+        const newUser = new User(req.body);
+        const savedUser = await newUser.save();
+
+        if (!savedUser) {
+            return res.status(400).json({ message: "Failed to create user" });
+        }
+
+        // If user is a Hospital, save hospital details
+        if (req.body.usertype === "Hospital") {
+            req.body.userid = savedUser._id;
+            const newHospital = new Hospital(req.body);
+            const savedHospital = await newHospital.save();
+            
+            if (!savedHospital) {
+                return res.status(400).json({ message: "Failed to create hospital" });
+            }
+
+            return res.status(200).json({
+                message: "User and Hospital created successfully",
+                newUser: savedUser,
+                hospital: savedHospital
+            });
+        }
+
+        // If user is a Donor, save in Donor collection
+        if (req.body.usertype === "Donor") {
+            const newDonor = new Donor({
+                donorid: savedUser._id,
+                bloodtype: req.body.bloodtype
+            });
+            await newDonor.save();
+        }
+
+        // If user is a Receipient, save in Receipient collection
+        if (req.body.usertype === "Receipient") {
+            const newReceipient = new Receipient({
+                receipientid: savedUser._id,
+                bloodtype: req.body.bloodtype
+            });
+            await newReceipient.save();
+        }
+
+        return res.status(200).json({
+            message: "User created successfully",
+            newUser: savedUser
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
 
 exports.getPendingDonor = (req, res) => {
     User.find({ status: "pending", usertype: "Donor" }, { password: 0 }).then((users) => {

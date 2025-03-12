@@ -60,9 +60,9 @@ class _UpdateTransplantationResultPageState extends State<UpdateTransplantationR
       appBar: AppBar(
         title: Text(
           'Update Transplantation Result',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
         ),
-        backgroundColor: Colors.pinkAccent,
+        backgroundColor: const Color.fromARGB(255, 75, 0, 25),
       ),
       body: transplantScheduledMatches.isEmpty
           ? Center(

@@ -4,40 +4,37 @@ import 'package:flutter/material.dart';
 import 'package:myapp/services/userservices.dart';
 
 class RegisterHospital extends StatefulWidget {
-  const RegisterHospital({super.key});
-
   @override
-  State<RegisterHospital> createState() => _RegisterHospitalState();
+  _RegisterHospitalState createState() => _RegisterHospitalState();
 }
 
 class _RegisterHospitalState extends State<RegisterHospital> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _dateController = TextEditingController();
-  String _role = 'Hospital';
-  String _status = 'pending';
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _locationController = TextEditingController();
   final _contactController = TextEditingController();
-  UserServices userservice = UserServices();
+  
+  final String _role = 'Hospital';
+  final String _status = 'pending';
+  final UserServices userservice = UserServices();
 
-  Future<void> submitForm() async {
+  Future<void> _submitForm() async {
     var hospitalData = jsonEncode({
-      'name': _nameController.text,
-      'email': _emailController.text,
-      'phone': _phoneController.text,
+      'name': _nameController.text.trim(),
+      'email': _emailController.text.trim(),
+      'phone': _phoneController.text.trim(),
       'usertype': _role,
       'password': _passwordController.text,
-      'location': _locationController.text,
-      'otherphno': _contactController.text,
+      'location': _locationController.text.trim(),
+      'otherphno': _contactController.text.trim(),
       'status': _status,
     });
-    print(hospitalData);
+
     try {
       final response = await userservice.registerUser(hospitalData);
-      print(response.data);
       _showSuccessDialog();
     } on DioException catch (e) {
       print(e.response);
@@ -49,16 +46,16 @@ class _RegisterHospitalState extends State<RegisterHospital> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           title: Text('Registration Successful'),
-          content: Text('You have successfully registered.'),
+          content: Text('Hospital registration completed successfully.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context)
-                    .pop(); // Navigate back to the previous screen
+                Navigator.of(context).pop(); // Navigate back to the previous screen
               },
-              child: Text('OK'),
+              child: Text('OK', style: TextStyle(color: const Color.fromARGB(255, 111, 7, 0))),
             ),
           ],
         );
@@ -70,165 +67,98 @@ class _RegisterHospitalState extends State<RegisterHospital> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register as Hospital'),
-        backgroundColor: Colors.red[200],
+        title: Text('Hospital Registration', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 81, 0, 0),
+        elevation: 4,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.pink.shade100, Colors.red.shade200],
+            colors: [const Color.fromARGB(255, 255, 244, 248), const Color.fromARGB(251, 255, 228, 228)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    'Hospital Registration',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Hospital Name',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(20),
+            child: Card(
+              elevation: 6,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Text(
+                        'Hospital Registration',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.redAccent),
                       ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your hospital name';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                      SizedBox(height: 20),
+
+                      _buildTextField(_nameController, 'Hospital Name'),
+                      SizedBox(height: 15),
+
+                      _buildTextField(_emailController, 'Email'),
+                      SizedBox(height: 15),
+
+                      _buildTextField(_phoneController, 'Phone Number'),
+                      SizedBox(height: 15),
+
+                      _buildTextField(_passwordController, 'Create Password', obscureText: true),
+                      SizedBox(height: 15),
+
+                      _buildTextField(_locationController, 'Location'),
+                      SizedBox(height: 15),
+
+                      _buildTextField(_contactController, 'Alternate Contact Number'),
+                      SizedBox(height: 20),
+
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _submitForm();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 81, 0, 0),
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          textStyle: TextStyle(fontSize: 18),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        child: Text('Register', style: TextStyle(color: Colors.white)),
                       ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      return null;
-                    },
+                    ],
                   ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _phoneController,
-                    decoration: InputDecoration(
-                      labelText: 'Phone Number',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your phone number';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'Create Password',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _locationController,
-                    decoration: InputDecoration(
-                      labelText: 'Location',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your location';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _contactController,
-                    decoration: InputDecoration(
-                      labelText: 'Other Contact Details',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your contact details';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        submitForm();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[400],
-                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                      textStyle: TextStyle(fontSize: 18, color: Colors.white),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: Text('Register'),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  /// Reusable function to create text fields
+  Widget _buildTextField(TextEditingController controller, String label, {bool obscureText = false}) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Please enter $label';
+        }
+        return null;
+      },
     );
   }
 }

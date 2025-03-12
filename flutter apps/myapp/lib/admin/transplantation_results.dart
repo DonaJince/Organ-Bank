@@ -36,8 +36,8 @@ class _TransplantationResultsPageState extends State<TransplantationResultsPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Transplantation Results'),
-        backgroundColor: const Color.fromARGB(255, 135, 0, 52),
+        title: Text('Transplantation Results', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 87, 0, 29),
         centerTitle: true,
       ),
       body: transplantationResults.isEmpty
@@ -65,7 +65,7 @@ class _TransplantationResultsPageState extends State<TransplantationResultsPage>
       margin: EdgeInsets.symmetric(vertical: 10),
       elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: const Color.fromARGB(194, 182, 68, 174),
+      color: const Color.fromARGB(255, 87, 0, 29),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(

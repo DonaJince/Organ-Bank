@@ -7,10 +7,12 @@ class ScheduleTransplantationPage extends StatefulWidget {
   const ScheduleTransplantationPage({super.key, required this.hospitalId});
 
   @override
-  _ScheduleTransplantationPageState createState() => _ScheduleTransplantationPageState();
+  _ScheduleTransplantationPageState createState() =>
+      _ScheduleTransplantationPageState();
 }
 
-class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPage> {
+class _ScheduleTransplantationPageState
+    extends State<ScheduleTransplantationPage> {
   UserServices userServices = UserServices();
   List<Map<String, dynamic>> successMatches = [];
   Map<String, TextEditingController> emailControllers = {};
@@ -24,14 +26,18 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
   Future<void> _fetchSuccessMatches() async {
     try {
       final response = await userServices.getSuccessMatches(widget.hospitalId);
+
+      if (!mounted) return; // Prevent updating UI if the widget is disposed
+
       setState(() {
         successMatches = response;
         emailControllers = {
-          for (var match in successMatches) match['_id']: TextEditingController()
+          for (var match in successMatches)
+            match['_id']: TextEditingController()
         };
       });
     } catch (e) {
-      print("Error fetching success matches: $e");
+      if (!mounted) return; // Prevent error if the widget is unmounted
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -41,18 +47,20 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
   Future<void> _scheduleTransplantation(String matchId) async {
     final emailBody = emailControllers[matchId]?.text ?? '';
     try {
-      final response = await userServices.scheduleTransplantation(matchId, emailBody);
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Transplantation scheduled successfully.')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to schedule transplantation.')),
-        );
-      }
+      final response =
+          await userServices.scheduleTransplantation(matchId, emailBody);
+
+      if (!mounted) return; // Check before showing a Snackbar
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response.statusCode == 200
+              ? 'Transplantation scheduled successfully.'
+              : 'Failed to schedule transplantation.'),
+        ),
+      );
     } catch (e) {
-      print("Error scheduling transplantation: $e");
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -65,9 +73,9 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
       appBar: AppBar(
         title: Text(
           'Schedule Transplantation',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.pinkAccent,
+        backgroundColor: const Color.fromARGB(255, 98, 0, 33),
       ),
       body: successMatches.isEmpty
           ? Center(
@@ -129,7 +137,8 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
                             },
                             child: Text(
                               'Schedule Transplantation',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.pinkAccent,
@@ -156,7 +165,8 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
         SizedBox(height: 6),
         Text(
           title,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+          style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
         ),
         Divider(color: Colors.pinkAccent),
       ],
@@ -175,6 +185,8 @@ class _ScheduleTransplantationPageState extends State<ScheduleTransplantationPag
     for (var controller in emailControllers.values) {
       controller.dispose();
     }
+    emailControllers.clear();
+    successMatches.clear();
     super.dispose();
   }
 }

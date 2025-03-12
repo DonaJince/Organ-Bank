@@ -42,8 +42,8 @@ class _ViewMatchesPageState extends State<ViewMatchesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pending Matches', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color.fromARGB(255, 210, 0, 87),
+        title: Text('Pending Matches', style: TextStyle(fontWeight: FontWeight.bold ,color: Colors.white )),
+        backgroundColor: const Color.fromARGB(255, 87, 0, 29),
         elevation: 0,
       ),
       body: Container(

@@ -10,7 +10,6 @@ var hospitalSchema = new mongoose.Schema({
     otherphno:{
         type:Number,
         required:true,
-        unique:true
     },
     location:{
         type:String,

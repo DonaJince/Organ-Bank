@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'My App',
       theme: ThemeData(
-       scaffoldBackgroundColor: Colors.red[200],
+       scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
       ),
       initialRoute: '/',
       routes: {
@@ -124,8 +124,8 @@ class HomePage extends StatelessWidget {
               Card(
                 elevation: 5,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                  borderRadius: BorderRadius.circular(10),  
+                 ),
                 child: Padding(
                   padding: EdgeInsets.all(15),
                   child: Column(
@@ -173,7 +173,7 @@ class HomePage extends StatelessWidget {
                       ),
                       SizedBox(height: 10),
                       _buildFeatureItem(
-                          '✔️ Register as an organ donor or recipient.'),
+                          '✔️ Register as an organ donor or receipient.'),
                       _buildFeatureItem(
                           '✔️ Match donors with recipients based on medical compatibility.'),
                       _buildFeatureItem(
@@ -221,7 +221,7 @@ class HomePage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
-          Icon(Icons.check_circle, color: Colors.pink),
+      
           SizedBox(width: 10),
           Expanded(
             child: Text(text,

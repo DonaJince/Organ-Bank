@@ -57,8 +57,8 @@ class _FeedbackFormState extends State<FeedbackForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Feedback Form', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.pinkAccent,
+        title: Text('Feedback Form', style: TextStyle(fontWeight: FontWeight.bold , color : Colors.white)), 
+        backgroundColor: const Color.fromARGB(255, 37, 3, 229),
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
@@ -75,7 +75,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                 children: <Widget>[
                   Text(
                     'We value your feedback!',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.pinkAccent),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 17, 3, 145)),
                   ),
                   SizedBox(height: 10),
                   TextField(
@@ -91,9 +91,9 @@ class _FeedbackFormState extends State<FeedbackForm> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _submitFeedback,
-                      child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      child: Text('Submit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold , color: Colors.white)),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.pinkAccent,
+                        backgroundColor: const Color.fromARGB(255, 0, 32, 189),
                         padding: EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-var userSchema = new mongoose.Schema({
+var adminSchema = new mongoose.Schema({
     name:{
         type:String,
         required:true,
@@ -16,25 +16,13 @@ var userSchema = new mongoose.Schema({
         type:Number,
         required:true,
     },
-    bloodtype:{
-        type:String,
-        trim:true
-    },
     password:{
         type:String,
         required:true,
-    },
-    usertype:{
-        type:String,
-        default:"invalid"
     },
     createdAt:{
         type:Date,
         default:Date.now
     },
-    status:{
-        type:String,
-        default:"pending"
-    }
 })
-module.exports = mongoose.model("User",userSchema);
+module.exports = mongoose.model("Admin",adminSchema);
