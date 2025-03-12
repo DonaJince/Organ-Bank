@@ -34,7 +34,7 @@ class _VerifyHospitalPageState extends State<VerifyHospitalPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Verify Donors'),
+        title: Text('Verify Hospitals'),
         backgroundColor: Colors.red[200],
       ),
       body: Container(
