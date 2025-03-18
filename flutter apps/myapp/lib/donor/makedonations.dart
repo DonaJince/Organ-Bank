@@ -149,12 +149,12 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Make a Donation', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.pinkAccent,
+        backgroundColor: const Color.fromARGB(255, 114, 0, 38),
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.pinkAccent.shade100, Colors.redAccent.shade100],
+            colors: [const Color.fromARGB(255, 255, 255, 255), const Color.fromARGB(255, 255, 176, 169)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -171,7 +171,7 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: const Color.fromARGB(255, 113, 0, 0)),
                 ),
                 SizedBox(height: 10),
                 Expanded(
@@ -186,7 +186,7 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
                           title: Text(key, style: TextStyle(color: Colors.black)),
                           value: key,
                           groupValue: selectedOrgan,
-                          activeColor: Colors.pinkAccent,
+                          activeColor: const Color.fromARGB(255, 111, 0, 37),
                           onChanged: (String? value) {
                             setState(() {
                               selectedOrgan = value;
@@ -202,7 +202,7 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
                   child: ElevatedButton(
                     onPressed: _submitDonation,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pinkAccent,
+                      backgroundColor: const Color.fromARGB(255, 104, 0, 35),
                       padding: EdgeInsets.symmetric(
                           horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(

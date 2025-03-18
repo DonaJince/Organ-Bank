@@ -76,13 +76,13 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
-        backgroundColor: Colors.red[200],
+        title: Text('Login', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 89, 0, 0),
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.pink[100]!, Colors.red[200]!],
+            colors: [const Color.fromARGB(255, 255, 255, 255)!, Colors.red[200]!],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -100,7 +100,7 @@ class LoginPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.red[900],
+                      color: const Color.fromARGB(255, 105, 0, 0),
                       shadows: [
                         Shadow(
                           blurRadius: 10.0,
@@ -159,7 +159,7 @@ class LoginPage extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red[900],
+                      backgroundColor: const Color.fromARGB(255, 80, 0, 0),
                       padding:
                           EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                       textStyle: TextStyle(fontSize: 18),
@@ -167,7 +167,7 @@ class LoginPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text('Login'),
+                    child: Text('Login', style: TextStyle(color: Colors.white)),
                   ),
                   SizedBox(height: 20),
                   TextButton(
@@ -179,7 +179,7 @@ class LoginPage extends StatelessWidget {
                     },
                     child: Text(
                       'New User? Sign Up',
-                      style: TextStyle(color: Colors.red[900], fontSize: 16),
+                      style: TextStyle(color: const Color.fromARGB(255, 94, 0, 0), fontSize: 16),
                     ),
                   ),
                 ],

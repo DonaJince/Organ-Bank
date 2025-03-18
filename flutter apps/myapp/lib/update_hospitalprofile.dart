@@ -86,13 +86,13 @@ class _UpdateHospitalProfilePageState extends State<UpdateHospitalProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Hospital Profile'),
-        backgroundColor: Colors.red[200],
+        title: Text('Update Hospital Profile', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 94, 0, 0),
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.pink.shade100, Colors.red.shade200],
+            colors: [const Color.fromARGB(255, 255, 255, 255), const Color.fromARGB(255, 255, 190, 190)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -197,14 +197,14 @@ class _UpdateHospitalProfilePageState extends State<UpdateHospitalProfilePage> {
                             child: ElevatedButton(
                               onPressed: _updateProfile,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red[200],
+                                backgroundColor: const Color.fromARGB(255, 86, 0, 0),
                                 padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                                 textStyle: TextStyle(fontSize: 18, color: Colors.white),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                              child: Text('Update Profile'),
+                              child: Text('Update Profile', style: TextStyle(color: Colors.white)),
                             ),
                           ),
                         ],

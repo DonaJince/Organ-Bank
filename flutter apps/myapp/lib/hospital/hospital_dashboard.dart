@@ -7,13 +7,13 @@ class HospitalDashboardPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hospital Dashboard'),
-        backgroundColor: Colors.red[200],
+        title: Text('Hospital Dashboard', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 96, 0, 0),
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.pink[100]!, Colors.red[200]!],
+            colors: [const Color.fromARGB(255, 255, 255, 255)!, Colors.red[200]!],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -104,7 +104,7 @@ class DashboardButton extends StatelessWidget {
         style: TextStyle(fontSize: 20, color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red[400],
+        backgroundColor: const Color.fromARGB(255, 92, 2, 0),
         padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),

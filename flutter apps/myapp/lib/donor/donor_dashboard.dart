@@ -8,14 +8,14 @@ class DonorDashboardPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Donor Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.red[200],
+        title: Text('Donor Dashboard', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 116, 0, 0),
         centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.pink.shade100, Colors.red.shade200],
+            colors: [const Color.fromARGB(255, 255, 255, 255), Colors.red.shade200],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -26,7 +26,7 @@ class DonorDashboardPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Welcome, Donor!',
+                'Welcome Back!',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -103,7 +103,7 @@ class DonorDashboardPage extends StatelessWidget {
           Navigator.pushNamed(context, route, arguments: argument);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color.fromARGB(255, 102, 0, 0),
           padding: EdgeInsets.symmetric(vertical: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -113,14 +113,14 @@ class DonorDashboardPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.red.shade900, size: 20),
+            Icon(icon, color: const Color.fromARGB(255, 255, 230, 230), size: 20),
             SizedBox(width: 10),
             Text(
               title,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.red.shade900,
+                color: const Color.fromARGB(255, 255, 255, 255),
               ),
             ),
           ],

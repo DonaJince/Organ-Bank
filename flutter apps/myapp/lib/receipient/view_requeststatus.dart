@@ -43,8 +43,8 @@ class _ViewRequestStatusPageState extends State<ViewRequestStatusPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Request Status'),
-        backgroundColor: Colors.pink.shade700, // Pinkish-Red Header
+        title: Text('Request Status', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 99, 0, 7), // Pinkish-Red Header
         elevation: 0,
       ),
       body: Container(
@@ -84,11 +84,11 @@ class _ViewRequestStatusPageState extends State<ViewRequestStatusPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.info_outline, size: 50, color: Colors.pink.shade300),
+          Icon(Icons.info_outline, size: 50, color: const Color.fromARGB(255, 105, 0, 17)),
           SizedBox(height: 10),
           Text(
             'No requests found.',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.pink.shade500),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: const Color.fromARGB(255, 115, 0, 38)),
           ),
         ],
       ),
@@ -124,13 +124,13 @@ class _ViewRequestStatusPageState extends State<ViewRequestStatusPage> {
         contentPadding: EdgeInsets.all(15),
         title: Text(
           'Organ: ${request['organ']}',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.pink.shade800),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: const Color.fromARGB(255, 137, 0, 0)),
         ),
         subtitle: Text(
           'Status: ${request['requested_status']}',
           style: TextStyle(fontSize: 14, color: Colors.grey[700]),
         ),
-        leading: Icon(Icons.favorite, color: Colors.pink.shade700),
+        leading: Icon(Icons.favorite, color: const Color.fromARGB(255, 81, 0, 0)),
       ),
     );
   }

@@ -66,8 +66,8 @@ class _ViewDonationStatusPageState extends State<ViewDonationStatusPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Donation Status', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.pinkAccent,
+        title: Text('Donation Status', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 104, 0, 35),
       ),
       body: donations.isEmpty
           ? Center(
@@ -89,11 +89,11 @@ class _ViewDonationStatusPageState extends State<ViewDonationStatusPage> {
                     contentPadding: EdgeInsets.all(16.0),
                     title: Text(
                       'Organ: ${donation['organ']}',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.redAccent),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: const Color.fromARGB(255, 103, 0, 0)),
                     ),
                     subtitle: Text(
                       'Status: ${donation['availability_status'] == 'available' ? 'Available' : 'Not Available'}',
-                      style: TextStyle(fontSize: 16, color: Colors.pinkAccent),
+                      style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 139, 0, 46)),
                     ),
                     trailing: donation['donation_status'] != 'pending'
                         ? Text(
@@ -106,7 +106,7 @@ class _ViewDonationStatusPageState extends State<ViewDonationStatusPage> {
                               _toggleDonationStatus(donation['_id'], newStatus);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: donation['availability_status'] == 'available' ? Colors.redAccent : Colors.green,
+                              backgroundColor: donation['availability_status'] == 'available' ? const Color.fromARGB(255, 149, 11, 11) : Colors.green,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                             ),
                             child: Text(

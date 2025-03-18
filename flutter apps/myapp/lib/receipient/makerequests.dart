@@ -167,13 +167,13 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Request an Organ', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.pinkAccent,
+        backgroundColor: const Color.fromARGB(255, 98, 0, 33),
       ),
       body: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.pink.shade100, Colors.redAccent.shade200],
+            colors: [const Color.fromARGB(255, 255, 255, 255), const Color.fromARGB(255, 255, 106, 106)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -188,14 +188,14 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                    color: const Color.fromARGB(255, 99, 0, 0)),
               ),
               SizedBox(height: 10),
               Expanded(
                 child: ListView(
                   children: availableOrgans.map((String organ) {
                     return Card(
-                      color: Colors.white,
+                      color: const Color.fromARGB(255, 255, 255, 255),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -204,7 +204,7 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
                             Text(organ, style: TextStyle(color: Colors.black)),
                         value: organ,
                         groupValue: selectedOrgan,
-                        activeColor: Colors.pinkAccent,
+                        activeColor: const Color.fromARGB(255, 115, 0, 38),
                         onChanged: (String? value) {
                           setState(() {
                             selectedOrgan = value;
@@ -221,13 +221,13 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                    color: const Color.fromARGB(255, 112, 0, 0)),
               ),
               SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: const Color.fromARGB(255, 255, 255, 255),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
@@ -258,7 +258,7 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
                 child: ElevatedButton(
                   onPressed: _submitRequest,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pinkAccent,
+                    backgroundColor: const Color.fromARGB(255, 102, 0, 34),
                     padding:
                         EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     shape: RoundedRectangleBorder(

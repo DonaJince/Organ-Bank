@@ -9,14 +9,14 @@ class ReceiverDashboardPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Receiver Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.red[200],
+        title: Text('Receiver Dashboard', style: TextStyle(fontWeight: FontWeight.bold , color : Colors.white)),
+        backgroundColor: const Color.fromARGB(255, 118, 0, 0),
         centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.pink.shade100, Colors.red.shade200],
+            colors: [const Color.fromARGB(255, 255, 255, 255), Colors.red.shade200],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -27,7 +27,7 @@ class ReceiverDashboardPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Welcome, Receiver!',
+                'Welcome Back!',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -104,7 +104,7 @@ class ReceiverDashboardPage extends StatelessWidget {
           Navigator.pushNamed(context, route, arguments: argument);
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
+          backgroundColor: const Color.fromARGB(255, 134, 3, 3),
           padding: EdgeInsets.symmetric(vertical: 15),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -114,14 +114,14 @@ class ReceiverDashboardPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.red.shade900, size: 20),
+            Icon(icon, color: const Color.fromARGB(255, 255, 223, 177), size: 20),
             SizedBox(width: 10),
             Text(
               title,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.red.shade900,
+                color: const Color.fromARGB(255, 255, 255, 255),
               ),
             ),
           ],

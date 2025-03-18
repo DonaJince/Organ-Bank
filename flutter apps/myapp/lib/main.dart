@@ -33,9 +33,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My App',
+      title: 'Organ Bank',
       theme: ThemeData(
-       scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
       ),
       initialRoute: '/',
       routes: {
@@ -97,98 +97,120 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                'Welcome to the Organ Bank',
-                style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 82, 0, 0)),
-              ),
-              SizedBox(height: 10),
-              Text(
-                'A platform dedicated to saving lives through efficient organ donation and transplantation.',
-                style: TextStyle(fontSize: 16, color: Colors.black87),
-              ),
-              SizedBox(height: 20),
-
-              // Add image above the About section
+              // Hero Section
               Center(
-                child: Image.asset(
-                  'assets/image.png', // Ensure this image exists in the assets folder
-                  height: 200,
-                ),
-              ),
-              SizedBox(height: 20),
-
-              // About Section
-              Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),  
-                 ),
-                child: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.info, color: const Color.fromARGB(255, 110, 0, 0), size: 30),
-                      SizedBox(height: 10),
-                      Text(
-                        'About the Program',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 102, 0, 0)),
+                child: Column(
+                  children: [
+                    Text(
+                      'Give the Gift of Life',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: const Color.fromARGB(255, 82, 0, 0),
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        'The Organ Bank is a life-saving initiative that connects donors and recipients through an efficient matching system. It ensures timely organ allocation while providing transparency in the donation process.',
-                        style: TextStyle(fontSize: 16, color: Colors.black87),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Register as an Organ Donor Today!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black87,
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-
-              // System Features Section
-              Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.settings, color: const Color.fromARGB(255, 126, 0, 0), size: 30),
-                      SizedBox(height: 10),
-                      Text(
-                        'What the System Does',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 101, 0, 0)),
-                      ),
-                      SizedBox(height: 10),
-                      _buildFeatureItem(
-                          '✔️ Register as an organ donor or receipient.'),
-                      _buildFeatureItem(
-                          '✔️ Match donors with recipients based on medical compatibility.'),
-                      _buildFeatureItem(
-                          '✔️ Manage donation and transplantation requests.'),
-                      _buildFeatureItem(
-                          '✔️ Provide a secure platform for hospitals to verify donor eligibility.'),
-                      _buildFeatureItem(
-                          '✔️ Generate reports and track transplantation success rates.'),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 20),
+                    Image.asset(
+                      'assets/image.png', // Ensure this image exists in the assets folder
+                      height: 200,
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 30),
 
-              // Login Button
+              // About the Organ Bank
+              Text(
+                'About the Organ Bank',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 102, 0, 0),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'The Organ Bank is a secure and efficient platform connecting organ donors with recipients. Our goal is to simplify the organ donation and transplantation process through technology-driven solutions.',
+                style: TextStyle(fontSize: 16, color: Colors.black87),
+              ),
+              SizedBox(height: 30),
+
+              // Key Features
+              Text(
+                'Key Features',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 102, 0, 0),
+                ),
+              ),
+              SizedBox(height: 10),
+              _buildFeatureItem('✅ Easy Registration – Sign up as a donor or recipient in just a few steps.'),
+              _buildFeatureItem('🔍 Automated Organ Matching – AI-driven system ensures accurate matches.'),
+              _buildFeatureItem('📢 Real-time Notifications – Stay updated on matching and transplant status.'),
+              _buildFeatureItem('🔒 Secure & Transparent – Ensuring trust with encrypted data handling.'),
+              SizedBox(height: 30),
+
+              // How It Works
+              Text(
+                'How It Works',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 102, 0, 0),
+                ),
+              ),
+              SizedBox(height: 10),
+              _buildStepItem('1. Register: Donors and recipients create profiles.'),
+              _buildStepItem('2. Organ Matching: Our system finds the best match based on medical compatibility.'),
+              _buildStepItem('3. Hospital Coordination: Schedule tests and transplant procedures.'),
+              _buildStepItem('4. Save a Life: The final transplant process takes place under expert medical supervision.'),
+              SizedBox(height: 30),
+
+              // Testimonials (Optional)
+              Text(
+                'Testimonials',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 102, 0, 0),
+                ),
+              ),
+              SizedBox(height: 10),
+              _buildTestimonialItem(
+                'This platform helped me find a matching kidney donor in record time. Forever grateful!',
+                'jennifer Lowrence',
+              ),
+              _buildTestimonialItem(
+                'Knowing my donation could save a life gives me immense satisfaction.',
+                'Tyler Lockhood',
+              ),
+              SizedBox(height: 30),
+
+              // Contact & Support
+              Text(
+                'Contact & Support',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 102, 0, 0),
+                ),
+              ),
+              SizedBox(height: 10),
+              _buildContactItem('📍 Location: Silver City, Atlas'),
+              _buildContactItem('📞 Helpline: +91 2648364908'),
+              _buildContactItem('📧 Email: organbank2025@gmail.com'),
+              SizedBox(height: 30),
+
+              // Footer Section
               Center(
                 child: ElevatedButton(
                   onPressed: () {
@@ -197,15 +219,33 @@ class HomePage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 99, 0, 0),
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                    textStyle:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text('Get Started',
-                      style: TextStyle(color: Colors.white)),
+                  child: Text('Get Started', style: TextStyle(color: Colors.white)),
+                ),
+              ),
+              SizedBox(height: 30),
 
+              // Footer Links
+              Center(
+                child: Column(
+                  children: [
+                    TextButton(
+                      onPressed: () {},
+                      child: Text('Privacy Policy', style: TextStyle(color: Colors.black87)),
+                    ),
+                    TextButton(
+                      onPressed: () {},
+                      child: Text('Terms & Conditions', style: TextStyle(color: Colors.black87)),
+                    ),
+                    TextButton(
+                      onPressed: () {},
+                      child: Text('FAQs', style: TextStyle(color: Colors.black87)),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -221,11 +261,63 @@ class HomePage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
-      
+          
           SizedBox(width: 10),
           Expanded(
-            child: Text(text,
-                style: TextStyle(fontSize: 16, color: Colors.black87)),
+            child: Text(text, style: TextStyle(fontSize: 16, color: Colors.black87)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper function for step list items
+  Widget _buildStepItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Icon(Icons.arrow_forward, color: Colors.blue),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(text, style: TextStyle(fontSize: 16, color: Colors.black87)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper function for testimonial items
+  Widget _buildTestimonialItem(String text, String author) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '"$text"',
+            style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic, color: Colors.black87),
+          ),
+          SizedBox(height: 5),
+          Text(
+            '- $author',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black54),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper function for contact items
+  Widget _buildContactItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Icon(Icons.contact_mail, color: Colors.red),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(text, style: TextStyle(fontSize: 16, color: Colors.black87)),
           ),
         ],
       ),
