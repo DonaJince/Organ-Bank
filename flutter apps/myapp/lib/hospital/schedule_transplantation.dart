@@ -16,6 +16,7 @@ class _ScheduleTransplantationPageState
   UserServices userServices = UserServices();
   List<Map<String, dynamic>> successMatches = [];
   Map<String, TextEditingController> emailControllers = {};
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -45,25 +46,37 @@ class _ScheduleTransplantationPageState
   }
 
   Future<void> _scheduleTransplantation(String matchId) async {
-    final emailBody = emailControllers[matchId]?.text ?? '';
-    try {
-      final response =
-          await userServices.scheduleTransplantation(matchId, emailBody);
+    if (_formKey.currentState?.validate() ?? false) {
+      final emailBody = emailControllers[matchId]?.text.trim() ?? '';
+      if (emailBody.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Date and time cannot be empty.')),
+        );
+        return;
+      }
 
-      if (!mounted) return; // Check before showing a Snackbar
+      try {
+        final response =
+            await userServices.scheduleTransplantation(matchId, emailBody);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.statusCode == 200
-              ? 'Transplantation scheduled successfully.'
-              : 'Failed to schedule transplantation.'),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+        if (!mounted) return; // Check before showing a Snackbar
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.statusCode == 200
+                ? 'Transplantation scheduled successfully.'
+                : 'Failed to schedule transplantation.'),
+            backgroundColor:
+                response.statusCode == 200 ? Colors.green : Colors.red,
+          ),
+        );
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
     }
   }
 
@@ -77,84 +90,105 @@ class _ScheduleTransplantationPageState
         ),
         backgroundColor: const Color.fromARGB(255, 98, 0, 33),
       ),
-      body: successMatches.isEmpty
-          ? Center(
-              child: Text(
-                'There are no matches for scheduling transplantation.',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-            )
-          : ListView.builder(
-              itemCount: successMatches.length,
-              itemBuilder: (context, index) {
-                final match = successMatches[index];
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Organ: ${match["organ"]}",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.pinkAccent,
-                          ),
-                        ),
-                        SizedBox(height: 6),
-                        _buildSectionTitle("Donor Details"),
-                        _buildInfoText("ID: ${match["donorid"]["_id"]}"),
-                        _buildInfoText("Name: ${match["donorName"]}"),
-                        _buildInfoText("Email: ${match["donorEmail"]}"),
-                        SizedBox(height: 6),
-                        _buildSectionTitle("Recipient Details"),
-                        _buildInfoText("ID: ${match["receipientid"]["_id"]}"),
-                        _buildInfoText("Name: ${match["receipientName"]}"),
-                        _buildInfoText("Email: ${match["receipientEmail"]}"),
-                        SizedBox(height: 10),
-                        TextField(
-                          controller: emailControllers[match['_id']],
-                          decoration: InputDecoration(
-                            labelText: 'Date And Time',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          maxLines: 3,
-                        ),
-                        SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _scheduleTransplantation(match['_id']);
-                            },
-                            child: Text(
-                              'Schedule Transplantation',
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.pink[100]!, Colors.red[200]!],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: successMatches.isEmpty
+            ? Center(
+                child: Text(
+                  'There are no matches for scheduling transplantation.',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              )
+            : Form(
+                key: _formKey,
+                child: ListView.builder(
+                  itemCount: successMatches.length,
+                  itemBuilder: (context, index) {
+                    final match = successMatches[index];
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Organ: ${match["organ"]}",
                               style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.pinkAccent,
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.pinkAccent,
                               ),
                             ),
-                          ),
+                            SizedBox(height: 6),
+                            _buildSectionTitle("Donor Details"),
+                            _buildInfoText("ID: ${match["donorid"]["_id"]}"),
+                            _buildInfoText("Name: ${match["donorName"]}"),
+                            _buildInfoText("Email: ${match["donorEmail"]}"),
+                            SizedBox(height: 6),
+                            _buildSectionTitle("Recipient Details"),
+                            _buildInfoText(
+                                "ID: ${match["receipientid"]["_id"]}"),
+                            _buildInfoText("Name: ${match["receipientName"]}"),
+                            _buildInfoText(
+                                "Email: ${match["receipientEmail"]}"),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              controller: emailControllers[match['_id']],
+                              decoration: InputDecoration(
+                                labelText: 'Date And Time',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              maxLines: 3,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter the date and time for the transplantation';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 12),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  _scheduleTransplantation(match['_id']);
+                                },
+                                child: Text(
+                                  'Schedule Transplantation',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.pinkAccent,
+                                  padding: EdgeInsets.symmetric(vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+      ),
     );
   }
 

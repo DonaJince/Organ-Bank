@@ -28,6 +28,8 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
   List<String> availableOrgans = [];
   Map<String, String> hospitalMap = {};
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +37,6 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
     _fetchBloodType();
     _fetchRequestedOrgans();
   }
-
 
   Future<void> _fetchApprovedHospitals() async {
     try {
@@ -95,7 +96,9 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
 
       setState(() {
         requestedOrgans = response;
-        availableOrgans = organs.where((organ) => !requestedOrgans.contains(organ)).toList();
+        availableOrgans = organs
+            .where((organ) => !requestedOrgans.contains(organ))
+            .toList();
       });
       print("Requested organs fetched successfully: $requestedOrgans");
       print("Available organs: $availableOrgans");
@@ -107,10 +110,12 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
     }
   }
 
-  Future<void> fetchMatchedDonor(String receipientId, String hospitalId, String bloodType, String organ) async {
+  Future<void> fetchMatchedDonor(String receipientId, String hospitalId,
+      String bloodType, String organ) async {
     try {
       print("Posting matched donor request for Recipient ID: $receipientId");
-      final response = await userServices.fetchMatchedDonor(receipientId, hospitalId, bloodType, organ);
+      final response = await userServices.fetchMatchedDonor(
+          receipientId, hospitalId, bloodType, organ);
       print("Matched donor request response: $response");
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -120,7 +125,7 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
   }
 
   Future<void> _submitRequest() async {
-    if (selectedOrgan != null && selectedHospitalId != null) {
+    if (_formKey.currentState?.validate() ?? false) {
       try {
         print(
             "Submitting Request - ID: ${widget.id}, Organ: $selectedOrgan, Hospital ID: $selectedHospitalId");
@@ -131,7 +136,8 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Request submitted successfully.')),
           );
-          fetchMatchedDonor(widget.id, selectedHospitalId!, bloodType!, selectedOrgan!);
+          fetchMatchedDonor(widget.id, selectedHospitalId!, bloodType!,
+              selectedOrgan!);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to submit request.')),
@@ -172,79 +178,99 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
             end: Alignment.bottomRight,
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Select an Organ to Request:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: ListView(
-                children: availableOrgans.map((String organ) {
-                  return Card(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: RadioListTile<String>(
-                      title: Text(organ, style: TextStyle(color: Colors.black)),
-                      value: organ,
-                      groupValue: selectedOrgan,
-                      activeColor: Colors.pinkAccent,
-                      onChanged: (String? value) {
-                        setState(() {
-                          selectedOrgan = value;
-                        });
-                      },
-                    ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Select an Organ to Request:',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                child: ListView(
+                  children: availableOrgans.map((String organ) {
+                    return Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: RadioListTile<String>(
+                        title:
+                            Text(organ, style: TextStyle(color: Colors.black)),
+                        value: organ,
+                        groupValue: selectedOrgan,
+                        activeColor: Colors.pinkAccent,
+                        onChanged: (String? value) {
+                          setState(() {
+                            selectedOrgan = value;
+                          });
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Select Hospital:',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                dropdownColor: Colors.white,
+                value: selectedHospital,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedHospital = newValue;
+                    selectedHospitalId = hospitalMap[newValue];
+                  });
+                },
+                items: hospitalMap.keys
+                    .map<DropdownMenuItem<String>>((String hospital) {
+                  return DropdownMenuItem<String>(
+                    value: hospital,
+                    child: Text(hospital, style: TextStyle(color: Colors.black)),
                   );
                 }).toList(),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a hospital';
+                  }
+                  return null;
+                },
               ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Select Hospital:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-            SizedBox(height: 10),
-            DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              dropdownColor: Colors.white,
-              value: selectedHospital,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedHospital = newValue;
-                  selectedHospitalId = hospitalMap[newValue];
-                });
-              },
-              items: hospitalMap.keys.map<DropdownMenuItem<String>>((String hospital) {
-                return DropdownMenuItem<String>(
-                  value: hospital,
-                  child: Text(hospital, style: TextStyle(color: Colors.black)),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitRequest,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pinkAccent,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _submitRequest,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.pinkAccent,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
+                  child: Text('Submit Request',
+                      style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
-                child: Text('Submit Request', style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

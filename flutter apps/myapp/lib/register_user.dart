@@ -13,6 +13,7 @@ class _RegisterUserState extends State<RegisterUser> {
   String _bloodType = 'A+';
   String _status = 'pending';
 
+  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -20,21 +21,23 @@ class _RegisterUserState extends State<RegisterUser> {
   UserServices userservice = UserServices();
 
   Future<void> _submitForm() async {
-    var userdata = jsonEncode({
-      'name': _nameController.text,
-      'email': _emailController.text,
-      'phone': _phoneController.text,
-      'bloodtype': _bloodType,
-      'usertype': _role,
-      'password': _passwordController.text,
-      'status': _status
-    });
+    if (_formKey.currentState?.validate() ?? false) {
+      var userdata = jsonEncode({
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'phone': _phoneController.text,
+        'bloodtype': _bloodType,
+        'usertype': _role,
+        'password': _passwordController.text,
+        'status': _status
+      });
 
-    try {
-      final response = await userservice.registerUser(userdata);
-      _showSuccessDialog();
-    } on DioException catch (e) {
-      print(e.response);
+      try {
+        final response = await userservice.registerUser(userdata);
+        _showSuccessDialog();
+      } on DioException catch (e) {
+        print(e.response);
+      }
     }
   }
 
@@ -84,63 +87,95 @@ class _RegisterUserState extends State<RegisterUser> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               child: Padding(
                 padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Text(
-                      'Register as Donor/Receiver',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 93, 0, 0)),
-                    ),
-                    SizedBox(height: 20),
-
-                    _buildTextField(_nameController, 'Name'),
-                    SizedBox(height: 15),
-
-                    _buildTextField(_emailController, 'Email'),
-                    SizedBox(height: 15),
-
-                    _buildTextField(_phoneController, 'Phone Number'),
-                    SizedBox(height: 15),
-
-                    _buildDropdown(
-                      value: _bloodType,
-                      items: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-                      label: 'Blood Type',
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _bloodType = newValue ?? _bloodType;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 15),
-
-                    _buildDropdown(
-                      value: _role,
-                      items: ['Donor', 'Receipient'],
-                      label: 'Role',
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _role = newValue ?? _role;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 15),
-
-                    _buildTextField(_passwordController, 'Create Password', obscureText: true),
-                    SizedBox(height: 20),
-
-                    ElevatedButton(
-                      onPressed: _submitForm,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 64, 0, 0),
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        textStyle: TextStyle(fontSize: 18),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Text(
+                        'Register as Donor/Receiver',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 93, 0, 0)),
                       ),
-                      child: Text('Register', style: TextStyle(color:const Color.fromARGB(255, 255, 255, 255),)),
-                    ),
-                  ],
+                      SizedBox(height: 20),
+
+                      _buildTextField(_nameController, 'Name', validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      }),
+                      SizedBox(height: 15),
+
+                      _buildTextField(_emailController, 'Email', validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                          return 'Please enter a valid email address';
+                        }
+                        return null;
+                      }),
+                      SizedBox(height: 15),
+
+                      _buildTextField(_phoneController, 'Phone Number', validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your phone number';
+                        }
+                        if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                          return 'Please enter a valid phone number';
+                        }
+                        return null;
+                      }),
+                      SizedBox(height: 15),
+
+                      _buildDropdown(
+                        value: _bloodType,
+                        items: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+                        label: 'Blood Type',
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _bloodType = newValue ?? _bloodType;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 15),
+
+                      _buildDropdown(
+                        value: _role,
+                        items: ['Donor', 'Receipient'],
+                        label: 'Role',
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _role = newValue ?? _role;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 15),
+
+                      _buildTextField(_passwordController, 'Create Password', obscureText: true, validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        /*if (value.length < 8) {
+                          return 'Password must be at least 8 characters long';
+                        }*/
+                        return null;
+                      }),
+                      SizedBox(height: 20),
+
+                      ElevatedButton(
+                        onPressed: _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 64, 0, 0),
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          textStyle: TextStyle(fontSize: 18),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        child: Text('Register', style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255))),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -151,8 +186,8 @@ class _RegisterUserState extends State<RegisterUser> {
   }
 
   /// Reusable function to create text fields
-  Widget _buildTextField(TextEditingController controller, String label, {bool obscureText = false}) {
-    return TextField(
+  Widget _buildTextField(TextEditingController controller, String label, {bool obscureText = false, String? Function(String?)? validator}) {
+    return TextFormField(
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
@@ -161,6 +196,7 @@ class _RegisterUserState extends State<RegisterUser> {
         fillColor: Colors.white,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
+      validator: validator,
     );
   }
 

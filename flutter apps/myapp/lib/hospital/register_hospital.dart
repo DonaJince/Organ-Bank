@@ -16,28 +16,30 @@ class _RegisterHospitalState extends State<RegisterHospital> {
   final _passwordController = TextEditingController();
   final _locationController = TextEditingController();
   final _contactController = TextEditingController();
-  
+
   final String _role = 'Hospital';
   final String _status = 'pending';
   final UserServices userservice = UserServices();
 
   Future<void> _submitForm() async {
-    var hospitalData = jsonEncode({
-      'name': _nameController.text.trim(),
-      'email': _emailController.text.trim(),
-      'phone': _phoneController.text.trim(),
-      'usertype': _role,
-      'password': _passwordController.text,
-      'location': _locationController.text.trim(),
-      'otherphno': _contactController.text.trim(),
-      'status': _status,
-    });
+    if (_formKey.currentState?.validate() ?? false) {
+      var hospitalData = jsonEncode({
+        'name': _nameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'phone': _phoneController.text.trim(),
+        'usertype': _role,
+        'password': _passwordController.text,
+        'location': _locationController.text.trim(),
+        'otherphno': _contactController.text.trim(),
+        'status': _status,
+      });
 
-    try {
-      final response = await userservice.registerUser(hospitalData);
-      _showSuccessDialog();
-    } on DioException catch (e) {
-      print(e.response);
+      try {
+        final response = await userservice.registerUser(hospitalData);
+        _showSuccessDialog();
+      } on DioException catch (e) {
+        print(e.response);
+      }
     }
   }
 
@@ -99,30 +101,65 @@ class _RegisterHospitalState extends State<RegisterHospital> {
                       ),
                       SizedBox(height: 20),
 
-                      _buildTextField(_nameController, 'Hospital Name'),
+                      _buildTextField(_nameController, 'Hospital Name', validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your hospital name';
+                        }
+                        return null;
+                      }),
                       SizedBox(height: 15),
 
-                      _buildTextField(_emailController, 'Email'),
+                      _buildTextField(_emailController, 'Email', validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                          return 'Please enter a valid email address';
+                        }
+                        return null;
+                      }),
                       SizedBox(height: 15),
 
-                      _buildTextField(_phoneController, 'Phone Number'),
+                      _buildTextField(_phoneController, 'Phone Number', validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your phone number';
+                        }
+                        if (!RegExp(r'^\d{10}$').hasMatch(value)) {
+                          return 'Please enter a valid phone number';
+                        }
+                        return null;
+                      }),
                       SizedBox(height: 15),
 
-                      _buildTextField(_passwordController, 'Create Password', obscureText: true),
+                      _buildTextField(_passwordController, 'Create Password', obscureText: true, validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        /*if (value.length < 8) {
+                          return 'Password must be at least 8 characters long';
+                        }*/
+                        return null;
+                      }),
                       SizedBox(height: 15),
 
-                      _buildTextField(_locationController, 'Location'),
+                      _buildTextField(_locationController, 'Location', validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your location';
+                        }
+                        return null;
+                      }),
                       SizedBox(height: 15),
 
-                      _buildTextField(_contactController, 'Alternate Contact Number'),
+                      _buildTextField(_contactController, 'Alternate Contact Number', validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your contact details';
+                        }
+                        return null;
+                      }),
                       SizedBox(height: 20),
 
                       ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _submitForm();
-                          }
-                        },
+                        onPressed: _submitForm,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(255, 81, 0, 0),
                           padding: EdgeInsets.symmetric(vertical: 15),
@@ -143,7 +180,7 @@ class _RegisterHospitalState extends State<RegisterHospital> {
   }
 
   /// Reusable function to create text fields
-  Widget _buildTextField(TextEditingController controller, String label, {bool obscureText = false}) {
+  Widget _buildTextField(TextEditingController controller, String label, {bool obscureText = false, String? Function(String?)? validator}) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
@@ -153,12 +190,7 @@ class _RegisterHospitalState extends State<RegisterHospital> {
         fillColor: Colors.white,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return 'Please enter $label';
-        }
-        return null;
-      },
+      validator: validator,
     );
   }
 }

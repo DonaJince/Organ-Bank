@@ -30,6 +30,8 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
     _bloodType = value;
   }
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -106,7 +108,14 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
   }
 
   Future<void> _submitDonation() async {
-    if (selectedOrgan != null) {
+    if (selectedOrgan == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select an organ to donate.')),
+      );
+      return;
+    }
+
+    if (_formKey.currentState?.validate() ?? false) {
       try {
         final response =
             await userServices.submitDonation(widget.id, [selectedOrgan!]);
@@ -126,10 +135,6 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
           SnackBar(content: Text('Error: $e')),
         );
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select an organ to donate.')),
-      );
     }
   }
 
@@ -156,52 +161,60 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Select Organ to Donate:',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                child: ListView(
-                  children: availableOrgans.map((String key) {
-                    return Card(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: RadioListTile<String>(
-                        title: Text(key, style: TextStyle(color: Colors.black)),
-                        value: key,
-                        groupValue: selectedOrgan,
-                        activeColor: Colors.pinkAccent,
-                        onChanged: (String? value) {
-                          setState(() {
-                            selectedOrgan = value;
-                          });
-                        },
-                      ),
-                    );
-                  }).toList(),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Select Organ to Donate:',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
-              ),
-              SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _submitDonation,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pinkAccent,
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                SizedBox(height: 10),
+                Expanded(
+                  child: ListView(
+                    children: availableOrgans.map((String key) {
+                      return Card(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: RadioListTile<String>(
+                          title: Text(key, style: TextStyle(color: Colors.black)),
+                          value: key,
+                          groupValue: selectedOrgan,
+                          activeColor: Colors.pinkAccent,
+                          onChanged: (String? value) {
+                            setState(() {
+                              selectedOrgan = value;
+                            });
+                          },
+                        ),
+                      );
+                    }).toList(),
                   ),
-                  child: Text('Donate', style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
-              ),
-            ],
+                SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _submitDonation,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pinkAccent,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: Text('Donate',
+                        style: TextStyle(fontSize: 18, color: Colors.white)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
