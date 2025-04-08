@@ -3,72 +3,95 @@ import 'package:flutter/material.dart';
 import 'package:myapp/choose_role.dart';
 import 'package:myapp/services/userservices.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  UserServices userservice = UserServices();
+
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+
+  final UserServices userservice = UserServices();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
 
   void _showErrorDialog(BuildContext context, String message) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Login Failed'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
+      builder: (_) => AlertDialog(
+        title: const Text('Login Failed'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 
   Future<void> loginUser(BuildContext context) async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
-    var userData = jsonEncode({
-      'email': _usernameController.text,
-      'password': _passwordController.text,
+    final userData = jsonEncode({
+      'email': _usernameController.text.trim(),
+      'password': _passwordController.text.trim(),
     });
+
     try {
       final response = await userservice.loginUser(userData);
-      print(response.data);
-      if (response.data['user'] == null) {
+
+      final user = response.data['user'];
+      if (user == null) {
         _showErrorDialog(context, 'Invalid credentials. Please try again.');
         return;
       }
 
-      if (response.data['user']['status'] == "pending") {
-        _showErrorDialog(context,
-            'Your account is pending verification. Please contact the admin.');
-      } else if (response.data['user']['status'] == "approved") {
-        String userType = response.data['user']['usertype'];
-        String userId = response.data['user']['_id'];
+      final String status = user['status'];
+      final String userType = user['usertype'];
+      final String userId = user['_id'];
 
-        if (userType == "Donor") {
-          Navigator.pushNamed(context, '/donorDashboard', arguments: userId);
-        } else if (userType == "Receipient") {
-          Navigator.pushNamed(context, '/receiverDashboard', arguments: userId);
-        } else if (userType == "Hospital") {
-          Navigator.pushNamed(context, '/hospitalDashboard', arguments: userId);
-        } else {
-          _showErrorDialog(
-              context, 'Invalid user type. Please contact support.');
+      if (status == "pending") {
+        _showErrorDialog(
+          context,
+          'Your account is pending verification. Please contact the admin.',
+        );
+        return;
+      }
+
+      if (status == "approved") {
+        switch (userType) {
+          case "Donor":
+            Navigator.pushNamed(context, '/donorDashboard', arguments: userId);
+            break;
+          case "Receipient":
+            Navigator.pushNamed(context, '/receiverDashboard', arguments: userId);
+            break;
+          case "Hospital":
+            Navigator.pushNamed(context, '/hospitalDashboard', arguments: userId);
+            break;
+          default:
+            _showErrorDialog(context, 'Invalid user type. Please contact support.');
         }
       } else {
-        _showErrorDialog(
-            context, 'Invalid user status. Please contact support.');
+        _showErrorDialog(context, 'Invalid user status. Please contact support.');
       }
     } catch (e) {
-      _showErrorDialog(context, 'Invalid Credentials. Please try again later.');
+      print(e.toString());
+      _showErrorDialog(context, 'Something went wrong. Please try again.');
     }
   }
 
@@ -76,13 +99,13 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login', style: TextStyle(color: Colors.white)),
+        title: const Text('Login', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color.fromARGB(255, 89, 0, 0),
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color.fromARGB(255, 255, 255, 255)!, Colors.red[200]!],
+            colors: [Colors.white, Colors.red[200]!],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -94,13 +117,13 @@ class LoginPage extends StatelessWidget {
               key: _formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
+                children: [
+                  const Text(
                     'Welcome Back!',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 105, 0, 0),
+                      color: Color.fromARGB(255, 105, 0, 0),
                       shadows: [
                         Shadow(
                           blurRadius: 10.0,
@@ -110,10 +133,11 @@ class LoginPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     controller: _usernameController,
-                    decoration: InputDecoration(
+                    focusNode: _emailFocusNode,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Email',
                       hintText: 'Enter your email',
@@ -129,12 +153,15 @@ class LoginPage extends StatelessWidget {
                       }
                       return null;
                     },
+                    onFieldSubmitted: (_) =>
+                        FocusScope.of(context).requestFocus(_passwordFocusNode),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     controller: _passwordController,
+                    focusNode: _passwordFocusNode,
                     obscureText: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Password',
                       hintText: 'Enter your password',
@@ -147,12 +174,13 @@ class LoginPage extends StatelessWidget {
                       }
                       return null;
                     },
+                    onFieldSubmitted: (_) => loginUser(context),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
                       if (_usernameController.text == 'admin@gmail.com' &&
-                          _passwordController.text == '123456789') {
+                          _passwordController.text == '1234') {
                         Navigator.pushNamed(context, '/adminDashboard');
                       } else {
                         loginUser(context);
@@ -161,25 +189,27 @@ class LoginPage extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 80, 0, 0),
                       padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                      textStyle: TextStyle(fontSize: 18),
+                          const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      textStyle: const TextStyle(fontSize: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text('Login', style: TextStyle(color: Colors.white)),
+                    child:
+                        const Text('Login', style: TextStyle(color: Colors.white)),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ChooseRole()),
+                        MaterialPageRoute(builder: (_) => ChooseRole()),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       'New User? Sign Up',
-                      style: TextStyle(color: const Color.fromARGB(255, 94, 0, 0), fontSize: 16),
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 94, 0, 0), fontSize: 16),
                     ),
                   ),
                 ],
