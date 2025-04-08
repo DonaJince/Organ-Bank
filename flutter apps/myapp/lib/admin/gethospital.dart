@@ -47,6 +47,7 @@ class _GetHospitalDetailsState extends State<GetHospitalDetails> {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Hospital Approved Successfully")));
         await _sendRegistrationApprovalEmail(hospitalDetails?['userid']['email']);
+        Navigator.pop(context, true);
       }
     } catch (e) {
       print("Error approving hospital: $e");
@@ -63,6 +64,7 @@ class _GetHospitalDetailsState extends State<GetHospitalDetails> {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Hospital Rejected Successfully")));
         await _sendRegistrationRejectionEmail(hospitalDetails?['userid']['email']);
+        Navigator.pop(context, true);
       }
     } catch (e) {
       print("Error rejecting hospital: $e");

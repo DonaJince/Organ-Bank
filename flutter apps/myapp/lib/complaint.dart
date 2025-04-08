@@ -42,6 +42,7 @@ class _ComplaintFormState extends State<ComplaintForm> {
             ),
           );
           _controller.clear();
+           Navigator.pop(context);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

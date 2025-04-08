@@ -135,9 +135,11 @@ class _MakeRequestPageState extends State<MakeRequestPage> {
         if (response.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Request submitted successfully.')),
+            
           );
           fetchMatchedDonor(widget.id, selectedHospitalId!, bloodType!,
               selectedOrgan!);
+              Navigator.pop(context, true);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to submit request.')),

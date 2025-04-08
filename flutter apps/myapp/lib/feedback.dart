@@ -37,6 +37,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
             SnackBar(content: Text('Feedback submitted successfully.'), backgroundColor: Colors.green),
           );
           _controller.clear();
+          Navigator.pop(context); // Close the feedback form after submission
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(response['message'] ?? 'Failed to submit feedback.'), backgroundColor: Colors.red),

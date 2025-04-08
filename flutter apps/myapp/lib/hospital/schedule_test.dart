@@ -54,33 +54,44 @@ class _ScheduleTestPageState extends State<ScheduleTestPage> {
   }
 
   Future<void> _sendTestScheduleEmail(String matchId) async {
-    if (_formKey.currentState?.validate() ?? false) {
-      final emailBody = emailControllers[matchId]?.text.trim() ?? '';
-      if (emailBody.isEmpty) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Email body cannot be empty.')),
-        );
-        return;
-      }
+  if (_formKey.currentState?.validate() ?? false) {
+    final emailBody = emailControllers[matchId]?.text.trim() ?? '';
+    if (emailBody.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email body cannot be empty.')),
+      );
+      return;
+    }
 
-      try {
-        final response = await userServices.sendTestScheduleEmail(matchId, emailBody);
-        if (!mounted) return;
+    try {
+      final response = await userServices.sendTestScheduleEmail(matchId, emailBody);
+      if (!mounted) return;
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.statusCode == 200 ? 'Email sent successfully.' : 'Failed to send email.'),
-            backgroundColor: response.statusCode == 200 ? Colors.green : Colors.red,
+            content: Text('Email sent successfully.'),
+            backgroundColor: Colors.green,
           ),
         );
-      } catch (e) {
-        if (!mounted) return;
+        await _fetchApprovedMatches(); // 🔁 Refresh list after success
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error sending email: ${e.toString()}')),
+          SnackBar(
+            content: Text('Failed to send email.'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error sending email: ${e.toString()}')),
+      );
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

@@ -47,6 +47,7 @@ class _GetReceipientDetailsState extends State<GetReceipientDetails> {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Recipient Approved Successfully")));
         await _sendRegistrationApprovalEmail(receipientDetails?['email']);
+        Navigator.pop(context, true); // Pass true to indicate success
       }
     } catch (e) {
       print("Error approving recipient: \$e");
@@ -63,6 +64,7 @@ class _GetReceipientDetailsState extends State<GetReceipientDetails> {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Recipient Rejected Successfully")));
         await _sendRegistrationRejectionEmail(receipientDetails?['email']);
+        Navigator.pop(context, true); // Pass true to indicate success
       }
     } catch (e) {
       print("Error rejecting recipient: \$e");
@@ -84,7 +86,8 @@ class _GetReceipientDetailsState extends State<GetReceipientDetails> {
 
   Future<void> _sendRegistrationRejectionEmail(String? email) async {
     try {
-      final response = await adminServices.sendRegistrationRejectionEmail(email);
+      final response =
+          await adminServices.sendRegistrationRejectionEmail(email);
       if (response.statusCode == 200) {
         print("Rejection email sent successfully");
       } else {
@@ -117,7 +120,10 @@ class _GetReceipientDetailsState extends State<GetReceipientDetails> {
                 ? Center(
                     child: Text(
                       'Failed to load recipient details',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   )
                 : Card(
@@ -132,40 +138,59 @@ class _GetReceipientDetailsState extends State<GetReceipientDetails> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Name: ${receipientDetails?['name'] ?? 'N/A'}',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
                           SizedBox(height: 10),
                           Text('Email: ${receipientDetails?['email'] ?? 'N/A'}',
-                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.grey[700])),
                           SizedBox(height: 10),
                           Text('Phone: ${receipientDetails?['phone'] ?? 'N/A'}',
-                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.grey[700])),
                           SizedBox(height: 10),
-                          Text('Created At: ${receipientDetails?['createdAt'] ?? 'N/A'}',
-                              style: TextStyle(fontSize: 16, color: Colors.grey[700])),
+                          Text(
+                              'Created At: ${receipientDetails?['createdAt'] ?? 'N/A'}',
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.grey[700])),
                           SizedBox(height: 10),
-                          Text('Status: ${receipientDetails?['status'] ?? 'Pending'}',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red[400])),
+                          Text(
+                              'Status: ${receipientDetails?['status'] ?? 'Pending'}',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red[400])),
                           SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               ElevatedButton(
-                                onPressed: receipientDetails?['status'] == 'Approved' ? null : _approveReceipient,
+                                onPressed:
+                                    receipientDetails?['status'] == 'Approved'
+                                        ? null
+                                        : _approveReceipient,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.green,
-                                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 15),
                                 ),
                                 child: Text('Approve',
-                                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
                               ),
                               ElevatedButton(
-                                onPressed: receipientDetails?['status'] == 'Rejected' ? null : _rejectReceipient,
+                                onPressed:
+                                    receipientDetails?['status'] == 'Rejected'
+                                        ? null
+                                        : _rejectReceipient,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,
-                                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 15),
                                 ),
                                 child: Text('Reject',
-                                    style: TextStyle(fontSize: 18, color: Colors.white)),
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white)),
                               ),
                             ],
                           ),

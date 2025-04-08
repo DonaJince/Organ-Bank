@@ -42,15 +42,25 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
   try {
     final response = await userServices.updateTestResult(matchId, testResult);
 
-    if (!mounted) return; // Prevent errors if the widget is unmounted
+    if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(response.statusCode == 200 
-          ? 'Test result updated successfully.' 
-          : 'Failed to update test result.'),
-      ),
-    );
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Test result updated successfully.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      await _fetchTestScheduledMatches(); // 🔁 Refresh the list
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update test result.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   } catch (e) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -58,6 +68,7 @@ class _UpdateTestResultPageState extends State<UpdateTestResultPage> {
     );
   }
 }
+
 
 
   @override

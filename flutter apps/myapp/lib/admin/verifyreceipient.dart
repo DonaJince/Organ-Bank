@@ -39,7 +39,8 @@ class _VerifyReceipientPageState extends State<VerifyReceipientPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Verify Recipients', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text('Verify Recipients',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Colors.red[200],
         centerTitle: true,
       ),
@@ -58,7 +59,10 @@ class _VerifyReceipientPageState extends State<VerifyReceipientPage> {
                 ? Center(
                     child: Text(
                       'No pending recipients.',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   )
                 : ListView.builder(
@@ -72,30 +76,39 @@ class _VerifyReceipientPageState extends State<VerifyReceipientPage> {
                         color: Colors.white.withOpacity(0.9),
                         margin: EdgeInsets.symmetric(vertical: 8),
                         child: ListTile(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
                           title: Text(
                             receipientDetails[index]['name'],
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
                             receipientDetails[index]['email'],
-                            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                            style: TextStyle(
+                                fontSize: 16, color: Colors.grey[700]),
                           ),
                           trailing: ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.of(context).push(
+                            onPressed: () async {
+                              final result = await Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => GetReceipientDetails(
                                     id: receipientDetails[index]["_id"],
                                   ),
                                 ),
                               );
+
+                              if (result == true) {
+                                getReceipientDetails(); // Refresh the list
+                              }
                             },
                             icon: Icon(Icons.verified, color: Colors.white),
-                            label: Text('Verify', style: TextStyle(color: Colors.white)),
+                            label: Text('Verify',
+                                style: TextStyle(color: Colors.white)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red[400],
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),

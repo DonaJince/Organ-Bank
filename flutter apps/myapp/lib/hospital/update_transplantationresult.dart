@@ -35,24 +35,39 @@ class _UpdateTransplantationResultPageState extends State<UpdateTransplantationR
   }
 
   Future<void> _updateTransplantationResult(String matchId, String transplantResult) async {
-    try {
-      final response = await userServices.updateTransplantationResult(matchId, transplantResult);
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Transplant result updated successfully.')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update transplant result.')),
-        );
-      }
-    } catch (e) {
-      print("Error updating transplant result: $e");
+  try {
+    final response = await userServices.updateTransplantationResult(matchId, transplantResult);
+
+    if (!mounted) return; // Prevent UI updates if widget is unmounted
+
+    if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(
+          content: Text('Transplant result updated successfully.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      await _fetchTransplantScheduledMatches(); // 🔁 Refresh the list
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update transplant result.'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
+  } catch (e) {
+    print("Error updating transplant result: $e");
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

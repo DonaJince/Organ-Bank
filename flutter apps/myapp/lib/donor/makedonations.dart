@@ -23,6 +23,7 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
   };
   List<String> donatedOrgans = [];
   List<String> availableOrgans = [];
+  bool isSubmitting = false;
 
   String? _bloodType;
   String? get bloodType => _bloodType;
@@ -52,15 +53,11 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
         print("Blood type fetched successfully: $bloodType");
       } else {
         print("Failed to fetch blood type: Invalid response format");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load blood type')),
-        );
+        _showSnackBar('Failed to load blood type');
       }
     } catch (e) {
       print("Error fetching blood type: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      _showSnackBar('Error: $e');
     }
   }
 
@@ -81,15 +78,11 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
         print("Available organs: $availableOrgans");
       } else {
         print("Failed to fetch donated organs: Invalid response format");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load donated organs')),
-        );
+        _showSnackBar('Failed to load donated organs');
       }
     } catch (e) {
       print("Error fetching donated organs: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      _showSnackBar('Error: $e');
     }
   }
 
@@ -97,44 +90,47 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
       String donorId, String bloodType, String organ) async {
     try {
       print("Posting matched recipient request for Donor ID: $donorId");
-      final response =
-          await userServices.fetchMatchedReceipient(donorId, bloodType, organ);
+      final response = await userServices.fetchMatchedReceipient(
+          donorId, bloodType, organ);
       print("Matched recipient request response: $response");
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      _showSnackBar('Error: $e');
     }
   }
 
   Future<void> _submitDonation() async {
     if (selectedOrgan == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select an organ to donate.')),
-      );
+      _showSnackBar('Please select an organ to donate.');
       return;
     }
 
-    if (_formKey.currentState?.validate() ?? false) {
-      try {
-        final response =
-            await userServices.submitDonation(widget.id, [selectedOrgan!]);
-        if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Donation submitted successfully.')),
-          );
-          fetchMatchedReceipient(widget.id, bloodType!, selectedOrgan!);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to submit donation.')),
-          );
-        }
-      } catch (e) {
-        print("Error submitting donation: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+    setState(() {
+      isSubmitting = true;
+    });
+
+    try {
+      final response =
+          await userServices.submitDonation(widget.id, [selectedOrgan!]);
+
+      if (response.statusCode == 200) {
+        _showSnackBar('Donation submitted successfully.');
+        await fetchMatchedReceipient(widget.id, bloodType!, selectedOrgan!);
+
+        setState(() {
+          donatedOrgans.add(selectedOrgan!);
+          availableOrgans.remove(selectedOrgan);
+          selectedOrgan = null;
+        });
+      } else {
+        _showSnackBar('Failed to submit donation.');
       }
+    } catch (e) {
+      print("Error submitting donation: $e");
+      _showSnackBar('Error: $e');
+    } finally {
+      setState(() {
+        isSubmitting = false;
+      });
     }
   }
 
@@ -154,7 +150,10 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color.fromARGB(255, 255, 255, 255), const Color.fromARGB(255, 255, 176, 169)],
+            colors: [
+              const Color.fromARGB(255, 255, 255, 255),
+              const Color.fromARGB(255, 255, 176, 169)
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -169,13 +168,15 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
                 Text(
                   'Select Organ to Donate:',
                   style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 113, 0, 0)),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 113, 0, 0),
+                  ),
                 ),
                 SizedBox(height: 10),
                 Expanded(
                   child: ListView(
+                    shrinkWrap: true,
                     children: availableOrgans.map((String key) {
                       return Card(
                         color: Colors.white,
@@ -200,17 +201,27 @@ class _MakeDonationsPageState extends State<MakeDonationsPage> {
                 SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
-                    onPressed: _submitDonation,
+                    onPressed: isSubmitting ? null : _submitDonation,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 104, 0, 35),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 50, vertical: 15),
+                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    child: Text('Donate',
-                        style: TextStyle(fontSize: 18, color: Colors.white)),
+                    child: isSubmitting
+                        ? SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            'Donate',
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          ),
                   ),
                 ),
               ],

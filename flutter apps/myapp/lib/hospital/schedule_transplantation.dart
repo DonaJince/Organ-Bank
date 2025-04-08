@@ -46,39 +46,48 @@ class _ScheduleTransplantationPageState
   }
 
   Future<void> _scheduleTransplantation(String matchId) async {
-    if (_formKey.currentState?.validate() ?? false) {
-      final emailBody = emailControllers[matchId]?.text.trim() ?? '';
-      if (emailBody.isEmpty) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Date and time cannot be empty.')),
-        );
-        return;
-      }
+  if (_formKey.currentState?.validate() ?? false) {
+    final emailBody = emailControllers[matchId]?.text.trim() ?? '';
+    if (emailBody.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Date and time cannot be empty.')),
+      );
+      return;
+    }
 
-      try {
-        final response =
-            await userServices.scheduleTransplantation(matchId, emailBody);
+    try {
+      final response =
+          await userServices.scheduleTransplantation(matchId, emailBody);
 
-        if (!mounted) return; // Check before showing a Snackbar
+      if (!mounted) return;
 
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.statusCode == 200
-                ? 'Transplantation scheduled successfully.'
-                : 'Failed to schedule transplantation.'),
-            backgroundColor:
-                response.statusCode == 200 ? Colors.green : Colors.red,
+            content: Text('Transplantation scheduled successfully.'),
+            backgroundColor: Colors.green,
           ),
         );
-      } catch (e) {
-        if (!mounted) return;
+
+        await _fetchSuccessMatches(); // 🔁 Refresh the page to update list
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(
+            content: Text('Failed to schedule transplantation.'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

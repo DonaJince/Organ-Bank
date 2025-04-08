@@ -12,21 +12,25 @@ class VerifyDonorPage extends StatefulWidget {
 class _VerifyDonorPageState extends State<VerifyDonorPage> {
   AdminServices adminServices = AdminServices();
   List<dynamic> donorDetails = [];
+  bool isLoading = true;
 
   Future<void> getDonorDetails() async {
     try {
       var response = await adminServices.getDonorDetails();
-      print(response);
       setState(() {
         donorDetails = response.data;
+        isLoading = false;
       });
     } catch (e) {
       print(e);
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     getDonorDetails();
   }
@@ -35,8 +39,12 @@ class _VerifyDonorPageState extends State<VerifyDonorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Verify Donors'),
+        title: Text(
+          'Verify Donors',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
         backgroundColor: Colors.red[200],
+        centerTitle: true,
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -47,56 +55,72 @@ class _VerifyDonorPageState extends State<VerifyDonorPage> {
           ),
         ),
         padding: const EdgeInsets.all(16.0),
-        child: donorDetails.isEmpty
-            ? Center(
-                child: Text(
-                  'No pending donors.',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              )
-            : ListView.builder(
-                itemCount: donorDetails.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+        child: isLoading
+            ? Center(child: CircularProgressIndicator(color: Colors.white))
+            : donorDetails.isEmpty
+                ? Center(
+                    child: Text(
+                      'No pending donors.',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
-                    elevation: 5,
-                    color: Colors.white.withOpacity(0.9),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      title: Text(
-                        donorDetails[index]['name'],
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        donorDetails[index]['email'],
-                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                      ),
-                      trailing: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => GetDonorDetails(
-                                      id: donorDetails[index]["_id"],
-                                    )),
-                          );
-                        },
-                        icon: Icon(Icons.verified, color: Colors.white),
-                        label: Text('Verify', style: TextStyle(color: Colors.white)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red[400],
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          elevation: 5,
+                  )
+                : ListView.builder(
+                    itemCount: donorDetails.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+                        elevation: 5,
+                        color: Colors.white.withOpacity(0.9),
+                        margin: EdgeInsets.symmetric(vertical: 8),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          title: Text(
+                            donorDetails[index]['name'],
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            donorDetails[index]['email'],
+                            style: TextStyle(
+                                fontSize: 16, color: Colors.grey[700]),
+                          ),
+                          trailing: ElevatedButton.icon(
+                            onPressed: () async {
+                              final result = await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => GetDonorDetails(
+                                    id: donorDetails[index]["_id"],
+                                  ),
+                                ),
+                              );
+
+                              if (result == true) {
+                                getDonorDetails(); // Refresh after verification
+                              }
+                            },
+                            icon: Icon(Icons.verified, color: Colors.white),
+                            label: Text('Verify',
+                                style: TextStyle(color: Colors.white)),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[400],
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 5,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
       ),
     );
   }

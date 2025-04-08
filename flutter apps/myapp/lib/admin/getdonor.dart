@@ -47,6 +47,7 @@ class _GetDonorDetailsState extends State<GetDonorDetails> {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Donor Approved Successfully")));
         await _sendRegistrationApprovalEmail(donorDetails?['email']);
+        Navigator.pop(context, true);
       }
     } catch (e) {
       print("Error approving donor: $e");
@@ -63,6 +64,7 @@ class _GetDonorDetailsState extends State<GetDonorDetails> {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Donor Rejected Successfully")));
         await _sendRegistrationRejectionEmail(donorDetails?['email']);
+        Navigator.pop(context, true);
       }
     } catch (e) {
       print("Error rejecting donor: $e");
